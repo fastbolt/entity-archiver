@@ -1,0 +1,32 @@
+{
+    "name": "fastbolt/entity-archiver-bundle",
+    "description": "Archives Doctrine entities",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Steffen Leußink",
+            "email": "slk@fastbolt.com"
+        }
+    ],
+    "require": {
+        "php": "7.4"
+    },
+    "require-dev": {
+        "symfony/console": "^6.3",
+        "symfony/config": "^6.3",
+        "symfony/http-kernel": "^6.3",
+        "doctrine/orm": "^2.16",
+        "doctrine/dbal": "^3.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fastbolt\\EntityArchiverBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    }
+}
