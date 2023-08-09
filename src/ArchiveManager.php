@@ -11,9 +11,9 @@ use Fastbolt\EntityArchiverBundle\Filter\EntityArchivingFilterInterface;
 use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
 use Fastbolt\EntityArchiverBundle\Model\EntityArchivingConfiguration;
 use Fastbolt\EntityArchiverBundle\Strategy\EntityArchivingStrategy;
+use InvalidArgumentException;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Routing\Exception\InvalidParameterException;
 
 class ArchiveManager
 {
@@ -225,7 +225,7 @@ class ArchiveManager
         foreach ($filters as $filter) {
             $filterType = $filter['type'];
             if (!array_key_exists($filterType, $this->filters)) {
-                throw new InvalidParameterException(
+                throw new InvalidArgumentException(
                     "No filter with name '$filterType' found. Found: " . implode(', ', array_keys($this->filters))
                 );
             }
