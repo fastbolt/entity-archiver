@@ -1,0 +1,24 @@
+services:
+    Fastbolt\EntityArchiverBundle\Filter\AgeArchivingFilter:
+        tags: [ 'fastbolt.archiver.filter' ]
+
+    Fastbolt\EntityArchiverBundle\Strategy\ArchiveStrategy:
+        tags: [ 'fastbolt.archiver.strategy' ]
+        arguments:
+            $entityManager: '@Doctrine\ORM\EntityManagerInterface'
+
+    Fastbolt\EntityArchiverBundle\Strategy\RemoveStrategy:
+        tags: [ 'fastbolt.archiver.strategy' ]
+        arguments:
+            $entityManager: '@Doctrine\ORM\EntityManagerInterface'
+
+    Fastbolt\EntityArchiverBundle\Factory\EntityArchivingConfigurationFactory:
+
+    Fastbolt\EntityArchiverBundle\ArchiveManager:
+        arguments:
+          $entityManager: '@Doctrine\ORM\EntityManagerInterface'
+          $configurationFactory: '@Fastbolt\EntityArchiverBundle\Factory\EntityArchivingConfigurationFactory'
+          $filters: !tagged_iterator fastbolt.archiver.filter
+          $strategies: !tagged_iterator fastbolt.archiver.strategy
+
+    Fastbolt\EntityArchiverBundle\Command\EntityArchiverCommand:
