@@ -19,10 +19,14 @@ Execute by using this command:
 php bin/console entity-archiver:run
 ```
 
-Options:
---dry-run           Will only display the results table, showing all entities from entity-archiver.yaml, the total 
-                    number of entries in the origin table and the number of entities selected for archiving
---update-schema     Will update the archive tables based on the configuration in entity-archiver.yaml
+**Options:**
+
+*--dry-run*
+Will only display the results table, showing all entities from entity-archiver.yaml, the total 
+number of entries in the origin table and the number of entities selected for archiving
+                    
+*--update-schema*
+Will update the archive tables based on the configuration in entity-archiver.yaml
 
 
 ***Configuration***
@@ -56,7 +60,7 @@ filter:
         - field        Entity field that is used to determin the age of the entry (Datetime)
 
 
-Adding new Filters and Strategies:
+***Adding new Filters and Strategies:***
 New filters need to implement the EntityArchivingFilterInterface, while strategies will need to implement the 
 ArchivingStrategyInterface. Add the corresponding tag in the services.yaml.
 
