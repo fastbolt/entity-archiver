@@ -19,7 +19,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('table_suffix')->defaultValue(self::ARCHIVE_TABLE_SUFFIX_DEFAULT)->end()
                 ->arrayNode('entities')
                     ->arrayPrototype()->children()
-                        ->scalarNode('strategy')->defaultValue('_archive')->end()
+                        ->scalarNode('strategy')->defaultValue('archive')->end()
                         ->arrayNode('filter') //TODO the following is probably wrong
                             ->arrayPrototype()
                                 ->scalarPrototype()->end()                          //undefined number of arguments
