@@ -7,7 +7,7 @@ Installation:
 composer require fastbolt/entity-archiver-bundle
 ```
 
-You will need to create an entity-archiver.yaml file in your config directory.
+You will need to create an entity-archiver.yaml file in your config directory. See 'Configuration' below.
 
 To use the command, you will need to add the following line to the bundles.php:
 ```php
@@ -47,8 +47,8 @@ entities:
       }
 ```
 
-
-table_suffix           Name of the table created by the bundle to hold the archived entities
+```
+table_suffix          Name of the table created by the bundle to hold the archived entities
 strategy               What to do with the entity when it is selected to be archived
     - remove           Deletes the enitity using the 'id'-column
     - archive          Removes it from the original table and pastes a non-unique copy to the archive table
@@ -58,7 +58,7 @@ filters:
         - age          integer         
         - unit         ("days"/"months"/"years")
         - field        Entity field that is used to determin the age of the entry (Datetime)
-
+```
 
 ***Adding new Filters and Strategies:***
 New filters need to implement the EntityArchivingFilterInterface, while strategies will need to implement the 
