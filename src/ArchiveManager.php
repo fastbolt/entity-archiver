@@ -5,7 +5,6 @@ namespace Fastbolt\EntityArchiverBundle;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\ORM\EntityManagerInterface;
 use Fastbolt\EntityArchiverBundle\Factory\EntityArchivingConfigurationFactory;
 use Fastbolt\EntityArchiverBundle\Filter\EntityArchivingFilterInterface;
@@ -195,7 +194,6 @@ class ArchiveManager
 
         $table = new Table($tableDraft->getName());
         foreach($schemaManager->listTableColumns($tableDraft->getName()) as $column) {
-            $debug = $column->getType()->getName();
             $table->addColumn($column->getName(), $column->getType()->getName());
         }
 
