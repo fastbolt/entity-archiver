@@ -24,8 +24,8 @@ class EntityArchivingConfigurationFactory
             }
 
             $filters = [];
-            if (array_key_exists('filter', $configForEntity)) {
-                $filters = $configForEntity['filter'];
+            if (array_key_exists('filters', $configForEntity)) {
+                $filters = $configForEntity['filters'];
             }
 
             $entityConfiguration = new EntityArchivingConfiguration();

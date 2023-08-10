@@ -39,7 +39,6 @@ class RemoveStrategy implements EntityArchivingStrategy
     protected function deleteFromOriginTable(array $changes): void
     {
         foreach ($changes as $change) {
-
             $metaData = $this->entityManager->getClassMetadata($change->getClassname());
             $tableName = $metaData->getTableName();
 

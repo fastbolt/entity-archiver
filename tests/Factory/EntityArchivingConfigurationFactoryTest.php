@@ -8,11 +8,13 @@ class EntityArchivingConfigurationFactoryTest extends TestCase
 {
     public function testCreate(): void
     {
-        $filter = [
-            'type' => 'age',
-            'age' => 10,
-            'unit' => 'years',
-            'field' => 'changedAt'
+        $filters = [
+            [
+                'type' => 'age',
+                'age' => 10,
+                'unit' => 'years',
+                'field' => 'changedAt'
+            ]
         ];
 
         $configuration = [
@@ -21,7 +23,7 @@ class EntityArchivingConfigurationFactoryTest extends TestCase
                 'App\Entity\User' => [
                     'strategy' => 'remove',
                     'fields' => ['id', 'foo'],
-                    'filter' => $filter
+                    'filters' => $filters
                 ]
             ]
         ];
@@ -36,7 +38,7 @@ class EntityArchivingConfigurationFactoryTest extends TestCase
         );
         self::assertSame('remove', $result->getStrategy(), 'Strategy not set correctly');
         self::assertSame(['id', 'foo'], $result->getArchivedFields(), 'Archived fields not set correctly');
-        self::assertSame($filter, $result->getFilters()[0], 'filters not set correctly');
+        self::assertSame($filters, $result->getFilters(), 'filters not set correctly');
     }
 
     public function testCreateWhenNoFieldsAndNoFilter(): void
@@ -54,6 +56,6 @@ class EntityArchivingConfigurationFactoryTest extends TestCase
         $result = $factory->create($configuration)[0];
 
         self::assertSame([], $result->getArchivedFields(), 'Archived fields should have not been set');
-        self::assertSame([], $result->getFilters()[0], 'filters should have not been set');
+        self::assertEmpty($result->getFilters(), 'filters should have not been set');
     }
 }
