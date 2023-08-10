@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
-class EntityArchiverBundleExtension extends Extension
+class EntityArchiverExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
