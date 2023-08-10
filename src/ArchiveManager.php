@@ -193,7 +193,7 @@ class ArchiveManager
         $comparator = $schemaManager->createComparator();
 
         $table = new Table($tableDraft->getName());
-        foreach($schemaManager->listTableColumns($tableDraft->getName()) as $column) {
+        foreach ($schemaManager->listTableColumns($tableDraft->getName()) as $column) {
             $table->addColumn($column->getName(), $column->getType()->getName());
         }
 
