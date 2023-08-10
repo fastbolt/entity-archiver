@@ -38,7 +38,7 @@ table_suffix: _archive
 entities:
   App\Entity\Article:
     strategy: archive
-    filter:
+    filters:
       - {
         type: age,
         age: 14,
@@ -53,7 +53,7 @@ strategy               What to do with the entity when it is selected to be arch
     - remove           Deletes the enitity using the 'id'-column
     - archive          Removes it from the original table and pastes a non-unique copy to the archive table
 
-filter:            
+filters:            
     - type: age
         - age          integer         
         - unit         ("days"/"months"/"years")
