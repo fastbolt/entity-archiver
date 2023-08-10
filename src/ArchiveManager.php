@@ -174,7 +174,7 @@ class ArchiveManager
         }
 
         if ($schemaManager->tablesExist($archiveTableName)) {
-            $this->updateTable($tableDraft);
+            $this->updateTableColumns($tableDraft);
 
             return;
         }
@@ -186,31 +186,21 @@ class ArchiveManager
      * @param Table $tableDraft
      * @return void
      * @throws Exception
+     * @throws SchemaException
      */
-    private function updateTable(Table $tableDraft): void
+    private function updateTableColumns(Table $tableDraft): void
     {
         $schemaManager = $this->entityManager->getConnection()->createSchemaManager();
+        $comparator = $schemaManager->createComparator();
 
-        $tableName = $tableDraft->getName();
-
-        // check if schema changes are needed
-        $existingColumns = $schemaManager->listTableColumns($tableName);
-        $addedColumns = [];
-        foreach ($tableDraft->getColumns() as $column) {
-            if (!in_array($column, $existingColumns)) {
-                $addedColumns[] = $column;
-            }
+        $table = new Table($tableDraft->getName());
+        foreach($schemaManager->listTableColumns($tableDraft->getName()) as $column) {
+            $debug = $column->getType()->getName();
+            $table->addColumn($column->getName(), $column->getType()->getName());
         }
 
-        $droppedColumns = [];
-        foreach ($existingColumns as $column) {
-            if (!in_array($column, $tableDraft->getColumns())) {
-                $droppedColumns[] = $column;
-            }
-        }
-
-        $tableDiff = new TableDiff($tableName, addedColumns: $addedColumns, droppedColumns: $droppedColumns);
-        $schemaManager->alterTable($tableDiff);
+        $diff = $comparator->compareTables($table, $tableDraft);
+        $schemaManager->alterTable($diff);
     }
 
     /**
