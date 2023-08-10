@@ -9,6 +9,9 @@ class Configuration implements ConfigurationInterface
 {
     private const ARCHIVE_TABLE_SUFFIX_DEFAULT = '_archive';
 
+    /**
+     * @return TreeBuilder
+     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('entity_archiver');

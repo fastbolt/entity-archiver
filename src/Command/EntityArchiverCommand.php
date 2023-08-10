@@ -11,12 +11,22 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class   EntityArchiverCommand extends Command
+class EntityArchiverCommand extends Command
 {
+    /**
+     * @var ArchiveManager
+     */
     private ArchiveManager $archiveManager;
 
+    /**
+     * @var array
+     */
     private array $config;
 
+    /**
+     * @param ArchiveManager $archiveManager
+     * @param array          $config
+     */
     public function __construct(
         ArchiveManager $archiveManager,
         array $config
@@ -27,6 +37,9 @@ class   EntityArchiverCommand extends Command
         parent::__construct('entity-archiver:run');
     }
 
+    /**
+     * @return void
+     */
     protected function configure(): void
     {
         $this
@@ -46,6 +59,13 @@ class   EntityArchiverCommand extends Command
             );
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     * @throws \Doctrine\DBAL\Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -97,7 +117,8 @@ class   EntityArchiverCommand extends Command
             );
         }
 
-        $alignRight = (new TableStyle())->setPadType(STR_PAD_LEFT);;
+        $alignRight = (new TableStyle())->setPadType(STR_PAD_LEFT);
+
         $table
             ->setColumnStyle(1, $alignRight)
             ->setColumnStyle(2, $alignRight);

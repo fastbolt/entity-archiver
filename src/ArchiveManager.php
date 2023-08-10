@@ -19,8 +19,14 @@ class ArchiveManager
 {
     use QueryManipulatorTrait;
 
+    /**
+     * @var bool
+     */
     private bool $isDryRun        = false;
 
+    /**
+     * @var bool
+     */
     private bool $isUpdateSchemas = false;
 
     /**
@@ -33,8 +39,14 @@ class ArchiveManager
      */
     private array $strategies = [];
 
+    /**
+     * @var EntityManagerInterface
+     */
     private EntityManagerInterface $entityManager;
 
+    /**
+     * @var EntityArchivingConfigurationFactory
+     */
     private EntityArchivingConfigurationFactory $configurationFactory;
 
     /**
@@ -72,6 +84,11 @@ class ArchiveManager
         }
     }
 
+    /**
+     * @param bool $isDryRun
+     * @param bool $updateSchemas
+     * @return $this
+     */
     public function setOptions(bool $isDryRun = false, bool $updateSchemas = false): self
     {
         $this->isDryRun        = $isDryRun;
@@ -256,6 +273,10 @@ class ArchiveManager
         }
     }
 
+    /**
+     * @param EntityArchivingConfiguration $configuration
+     * @return array
+     */
     private function getColumnNames(EntityArchivingConfiguration $configuration): array
     {
         $metaData = $this->entityManager->getClassMetadata($configuration->getClassname());

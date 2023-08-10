@@ -13,11 +13,17 @@ class RemoveStrategy implements EntityArchivingStrategy
 
     private EntityManagerInterface $entityManager;
 
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return 'remove';
     }
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -26,6 +32,7 @@ class RemoveStrategy implements EntityArchivingStrategy
     /**
      * @param ArchivingChange[] $changes
      * @return void
+     * @throws Exception
      */
     public function execute(array $changes): void
     {

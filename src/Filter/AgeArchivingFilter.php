@@ -14,15 +14,17 @@ class AgeArchivingFilter implements EntityArchivingFilterInterface
 
     private string $name = 'age';
 
-    public function __construct()
-    {
-    }
-
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
+    /**
+     * @return void
+     */
     public function apply(
         string &$query,
         EntityArchivingConfiguration $configuration
@@ -49,6 +51,12 @@ class AgeArchivingFilter implements EntityArchivingFilterInterface
         $query .= $this->getConditionTemplate($query) . $condition;
     }
 
+    /**
+     * @param EntityArchivingConfiguration $configuration
+     * @param array $filterConfig
+     * @return string
+     * @throws UnrecognizedField
+     */
     private function getCondition(EntityArchivingConfiguration $configuration, array $filterConfig): string
     {
         if (!array_key_exists('field', $filterConfig)) {

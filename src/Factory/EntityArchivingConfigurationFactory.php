@@ -2,7 +2,6 @@
 
 namespace Fastbolt\EntityArchiverBundle\Factory;
 
-
 use Fastbolt\EntityArchiverBundle\Model\EntityArchivingConfiguration;
 
 class EntityArchivingConfigurationFactory

@@ -6,7 +6,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
-use Fastbolt\EntityArchiverBundle\Strategy\ArchiveStrategy;
 use Fastbolt\EntityArchiverBundle\Strategy\RemoveStrategy;
 use PHPUnit\Framework\TestCase;
 

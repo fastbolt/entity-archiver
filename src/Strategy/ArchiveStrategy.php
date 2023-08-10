@@ -11,11 +11,17 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
 {
     private EntityManagerInterface $entityManager;
 
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return 'archive';
     }
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -56,7 +62,7 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
             $query = sprintf(
                 'INSERT INTO %s (%s) VALUES %s',
                 $entityChange->getArchiveTableName(),
-                implode(', ',$columnNames),
+                implode(', ', $columnNames),
                 $valuesString
             );
 
@@ -66,6 +72,9 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
         }
     }
 
+    /**
+     * @return void
+     */
     protected function addArchivedAtField(ArchivingChange $entityChange): void
     {
         $columns = $entityChange->getArchivedColumns();

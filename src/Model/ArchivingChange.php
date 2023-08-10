@@ -103,33 +103,57 @@ class ArchivingChange
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getStrategy(): string
     {
         return $this->strategy;
     }
 
+    /**
+     * @param string $strategy
+     *
+     * @return $this
+     */
     public function setStrategy(string $strategy): ArchivingChange
     {
         $this->strategy = $strategy;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getArchivedColumns(): array
     {
         return $this->archivedColumns;
     }
 
+    /**
+     * @param array $archivedColumns
+     *
+     * @return $this
+     */
     public function setArchivedColumns(array $archivedColumns): ArchivingChange
     {
         $this->archivedColumns = $archivedColumns;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getArchiveTableName(): string
     {
         return $this->archiveTableName;
     }
 
+    /**
+     * @param string $archiveTableName
+     *
+     * @return $this
+     */
     public function setArchiveTableName(string $archiveTableName): ArchivingChange
     {
         $this->archiveTableName = $archiveTableName;
