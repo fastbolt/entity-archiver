@@ -1,6 +1,6 @@
 <?php
 
-namespace Fastbolt\EntityArchiverBundle\Factory;
+namespace App\Tests\Factory;
 
 use PHPUnit\Framework\TestCase;
 

@@ -3,6 +3,8 @@
 use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
 use PHPUnit\Framework\TestCase;
 
+namespace App\Tests\Model;
+
 class ArchivingChangeTest extends TestCase
 {
     public function testGetterSetter(): void
