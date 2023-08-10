@@ -85,7 +85,7 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
 
         $changes = $entityChange->getChanges();
         foreach ($changes as &$change) {
-            if (!array_key_exists('archivedAt', $change)) { //TODO is key name correct?
+            if (!array_key_exists('archivedAt', $change)) {
                 $change['archived_at'] = $this->formatDate(new DateTime());
             }
         }

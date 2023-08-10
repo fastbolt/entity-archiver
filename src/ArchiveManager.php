@@ -5,6 +5,7 @@ namespace Fastbolt\EntityArchiverBundle;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\ORM\EntityManagerInterface;
 use Fastbolt\EntityArchiverBundle\Factory\EntityArchivingConfigurationFactory;
 use Fastbolt\EntityArchiverBundle\Filter\EntityArchivingFilterInterface;
@@ -151,18 +152,14 @@ class ArchiveManager
         $tableName        = $metaData->getTableName();
         $archiveTableName = $tableName . $configuration->getArchiveTableSuffix();
         $schemaManager    = $this->entityManager->getConnection()->createSchemaManager();
-        if ($schemaManager->tablesExist($archiveTableName)) {
-            //TODO check if schema changes are needed
-            return;
-        }
 
-        $table      = new Table($archiveTableName);
-        $fieldNames = $metaData->getFieldNames();
+        $tableDraft       = new Table($archiveTableName);
+        $fieldNames       = $metaData->getFieldNames();
         $archivedAtExists = false;
         foreach ($fieldNames as $fieldName) {
             $columnName = $metaData->getColumnName($fieldName);
             $columnType = $metaData->getTypeOfField($fieldName);
-            $table
+            $tableDraft
                 ->addColumn($columnName, $columnType)
                 ->setNotnull(false)
                 ->setDefault(null); //TODO this is not set for some reason
@@ -173,10 +170,47 @@ class ArchiveManager
         }
 
         if (!$archivedAtExists) {
-            $table->addColumn('archived_at', 'date');
+            $tableDraft->addColumn('archived_at', 'date');
         }
 
-        $schemaManager->createTable($table);
+        if ($schemaManager->tablesExist($archiveTableName)) {
+            $this->updateTable($tableDraft);
+
+            return;
+        }
+
+        $schemaManager->createTable($tableDraft);
+    }
+
+    /**
+     * @param Table $tableDraft
+     * @return void
+     * @throws Exception
+     */
+    private function updateTable(Table $tableDraft): void
+    {
+        $schemaManager = $this->entityManager->getConnection()->createSchemaManager();
+
+        $tableName = $tableDraft->getName();
+
+        // check if schema changes are needed
+        $existingColumns = $schemaManager->listTableColumns($tableName);
+        $addedColumns = [];
+        foreach ($tableDraft->getColumns() as $column) {
+            if (!in_array($column, $existingColumns)) {
+                $addedColumns[] = $column;
+            }
+        }
+
+        $droppedColumns = [];
+        foreach ($existingColumns as $column) {
+            if (!in_array($column, $tableDraft->getColumns())) {
+                $droppedColumns[] = $column;
+            }
+        }
+
+        $tableDiff = new TableDiff($tableName, addedColumns: $addedColumns, droppedColumns: $droppedColumns);
+        $schemaManager->alterTable($tableDiff);
     }
 
     /**
