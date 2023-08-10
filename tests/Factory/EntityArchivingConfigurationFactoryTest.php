@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Tests\Factory;
+namespace Fastbolt\EntityArchiverBundle\Tests\Factory;
 
+use Fastbolt\EntityArchiverBundle\Factory\EntityArchivingConfigurationFactory;
 use PHPUnit\Framework\TestCase;
 
 class EntityArchivingConfigurationFactoryTest extends TestCase

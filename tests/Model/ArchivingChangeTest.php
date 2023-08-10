@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Model;
+namespace Fastbolt\EntityArchiverBundle\Tests\Model;
 
 use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
 use PHPUnit\Framework\TestCase;

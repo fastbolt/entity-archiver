@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Strategy;
+namespace Fastbolt\EntityArchiverBundle\Tests\Strategy;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result;
