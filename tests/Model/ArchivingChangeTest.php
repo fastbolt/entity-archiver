@@ -1,9 +1,9 @@
 <?php
 
+namespace App\Tests\Model;
+
 use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
 use PHPUnit\Framework\TestCase;
-
-namespace App\Tests\Model;
 
 class ArchivingChangeTest extends TestCase
 {
