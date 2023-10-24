@@ -23,7 +23,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('entities')
                     ->arrayPrototype()->children()
                         ->scalarNode('strategy')->defaultValue('archive')->end()
-                        ->arrayNode('filters') //TODO the following is probably wrong
+                        ->arrayNode('filters')
                             ->arrayPrototype()
                                 ->scalarPrototype()->end()                          //undefined number of arguments
                             ->children()
