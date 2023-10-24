@@ -228,7 +228,7 @@ class ArchiveManager
 
         //get entries that will be archived
         if ($configuration->getStrategy()->needsItemIdOnly()) {
-            $query = "SELECT %s FROM " . $tableName;
+            $query = "SELECT id FROM " . $tableName;
         } else {
             $columnSelect = $this->removeSpecialChars(implode(', ', $configuration->getArchivedFields()));
             $query = sprintf(

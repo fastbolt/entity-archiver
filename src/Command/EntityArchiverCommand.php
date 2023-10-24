@@ -112,7 +112,7 @@ class EntityArchiverCommand extends Command
                     $change->getClassname(),
                     $change->getTotalEntities(),
                     count($change->getChanges()),
-                    $change->getStrategy()
+                    $change->getStrategy()->getName()
                 ]
             );
         }
