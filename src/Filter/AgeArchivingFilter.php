@@ -76,15 +76,13 @@ class AgeArchivingFilter implements EntityArchivingFilterInterface
         $date      = $this->formatDate(new \DateTime("- $age $unit"));
         $fieldName = $filterConfig['field'];
 
-        if (!in_array($fieldName, $configuration->getArchivedFields())) {
+        if (!in_array($fieldName, $configuration->getColumnNames())) {
             throw new UnrecognizedField(
                 "Attribute " . $fieldName . " not found on " . $configuration->getClassname()
-                . '. Found: ' . implode(', ', $configuration->getArchivedFields())
+                . '. Found: ' . implode(', ', $configuration->getColumnNames())
             );
         }
 
-        $columnName = $configuration->getColumnNames()[$fieldName];
-
-        return sprintf('%s < "%s"', $columnName, $date);
+        return sprintf('%s < "%s"', $fieldName, $date);
     }
 }

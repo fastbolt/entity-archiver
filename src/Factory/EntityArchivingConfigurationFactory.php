@@ -7,11 +7,12 @@ use Fastbolt\EntityArchiverBundle\Model\EntityArchivingConfiguration;
 class EntityArchivingConfigurationFactory
 {
     /**
-     * @param array $configurations
+     * @param array $configuration
+     * @param array $strategies
      *
      * @return EntityArchivingConfiguration[]
      */
-    public function create(array $configuration): array
+    public function create(array $configuration, array $strategies): array
     {
         $tableSuffix = $configuration['table_suffix'];
         $configurations = $configuration['entities'];
@@ -27,9 +28,14 @@ class EntityArchivingConfigurationFactory
                 $filters = $configForEntity['filters'];
             }
 
+            if (!array_key_exists($configForEntity['strategy'], $strategies)) {
+                throw new \OutOfRangeException("Strategy not found: " . $configForEntity['strategy']);
+            }
+            $strategy = $strategies[$configForEntity['strategy']];
+
             $entityConfiguration = new EntityArchivingConfiguration();
             $entityConfiguration
-                ->setStrategy($configForEntity['strategy'])
+                ->setStrategy($strategy)
                 ->setClassname($classname)
                 ->setArchivedFields($fields)
                 ->setFilters($filters)

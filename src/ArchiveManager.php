@@ -110,7 +110,7 @@ class ArchiveManager
             );
         }
 
-        $entityConfigurations = $this->configurationFactory->create($configuration);
+        $entityConfigurations = $this->configurationFactory->create($configuration, $this->strategies);
 
         $changes = [];
         foreach ($entityConfigurations as $entityConfig) {
@@ -227,19 +227,19 @@ class ArchiveManager
             ->fetchOne();
 
         //get entries that will be archived
-        $columnNames = $this->getColumnNames($configuration);
-        $columnSelect = $this->removeSpecialChars(implode(', ', $columnNames));
+        $columnSelect = $this->removeSpecialChars(implode(', ', $configuration->getArchivedFields()));
         $query = sprintf(
             "SELECT %s FROM %s",
             $columnSelect,
             $tableName
         );
 
+        $configuration->setColumnNames($metaData->getColumnNames());
+
         // "archivedAt" field may not exist in the original table, so we add it here
         if ($configuration->isAddArchivedAtField()) {
-            $columnNames = array_merge($columnNames, ['archivedAt' => 'archived_at']);
+            $configuration->setArchivedFields(array_merge($configuration->getArchivedFields(), ['archivedAt']));
         }
-        $configuration->setColumnNames($columnNames);
 
         $this->applyFilters($configuration, $query);
 
@@ -253,7 +253,7 @@ class ArchiveManager
             ->setTotalEntities($entryCount)
             ->setClassname($configuration->getClassname())
             ->setStrategy($configuration->getStrategy())
-            ->setArchivedColumns($configuration->getColumnNames())
+            ->setArchivedColumns($configuration->getArchivedFields())
             ->setChanges($result)
             ->setArchiveTableName($tableName . $configuration->getArchiveTableSuffix());
 
@@ -303,28 +303,28 @@ class ArchiveManager
         }
     }
 
-    /**
-     * @param EntityArchivingConfiguration $configuration
-     * @return array
-     */
-    private function getColumnNames(EntityArchivingConfiguration $configuration): array
-    {
-        $metaData = $this->entityManager->getClassMetadata($configuration->getClassname());
-
-        if (empty($configuration->getArchivedFields())) {
-            $fields = [];
-            foreach ($metaData->getColumnNames() as $colName) {
-                $fields[$colName] = $metaData->getFieldName($colName);
-            }
-
-            $configuration->setArchivedFields($fields);
-        }
-
-        $columnNames = [];
-        foreach ($configuration->getArchivedFields() as $field) {
-            $columnNames[$field] = $metaData->getColumnName($field);
-        }
-
-        return $columnNames;
-    }
+//    /**
+//     * @param EntityArchivingConfiguration $configuration
+//     * @return array
+//     */
+//    private function getColumnNames(EntityArchivingConfiguration $configuration): array
+//    {
+//        $metaData = $this->entityManager->getClassMetadata($configuration->getClassname());
+//
+//        if (empty($configuration->getArchivedFields())) {
+//            $fields = [];
+//            foreach ($metaData->getColumnNames() as $colName) {
+//                $fields[$colName] = $metaData->getFieldName($colName);
+//            }
+//
+//            $configuration->setArchivedFields($fields);
+//        }
+//
+//        $columnNames = [];
+//        foreach ($configuration->getArchivedFields() as $field) {
+//            $columnNames[$field] = $metaData->getColumnName($field);
+//        }
+//
+//        return $columnNames;
+//    }
 }

@@ -2,6 +2,8 @@
 
 namespace Fastbolt\EntityArchiverBundle\Model;
 
+use Fastbolt\EntityArchiverBundle\Strategy\EntityArchivingStrategy;
+
 class EntityArchivingConfiguration
 {
     public const ARCHIVING_STRATEGY_ARCHIVE = 'archive';
@@ -9,7 +11,7 @@ class EntityArchivingConfiguration
 
     private string $classname = '';
 
-    private string $strategy  = '';
+    private ?EntityArchivingStrategy $strategy  = null;
 
     /**
      * @var string[] $archivedFields
@@ -22,7 +24,7 @@ class EntityArchivingConfiguration
 
     private string $archiveTableSuffix = '';
 
-    private bool $addArchivedAtField = true;
+    private bool $addArchivedAtField = false;
 
     /**
      * @return string
@@ -45,19 +47,19 @@ class EntityArchivingConfiguration
     }
 
     /**
-     * @return string
+     * @return EntityArchivingStrategy|null
      */
-    public function getStrategy(): string
+    public function getStrategy(): ?EntityArchivingStrategy
     {
         return $this->strategy;
     }
 
     /**
-     * @param string $strategy
+     * @param EntityArchivingStrategy|null $strategy
      *
      * @return $this
      */
-    public function setStrategy(string $strategy): EntityArchivingConfiguration
+    public function setStrategy(?EntityArchivingStrategy $strategy): EntityArchivingConfiguration
     {
         $this->strategy = $strategy;
 
