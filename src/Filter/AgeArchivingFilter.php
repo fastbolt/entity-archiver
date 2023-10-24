@@ -76,7 +76,7 @@ class AgeArchivingFilter implements EntityArchivingFilterInterface
         $date      = $this->formatDate(new \DateTime("- $age $unit"));
         $fieldName = $filterConfig['field'];
 
-        if (!array_key_exists($fieldName, $configuration->getColumnNames())) {
+        if (!array_key_exists($fieldName, $configuration->getArchivedFields())) {
             throw new UnrecognizedField(
                 "Attribute " . $fieldName . " not found on " . $configuration->getClassname()
                 . '. Found: ' . implode(', ', $configuration->getArchivedFields())
