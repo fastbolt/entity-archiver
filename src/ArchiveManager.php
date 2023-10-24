@@ -322,7 +322,7 @@ class ArchiveManager
         }
 
         if ($configuration->isAddArchivedAtField()) {
-            $columnNames = array_merge([['archivedAt' => 'archived_at']], $columnNames);
+            $columnNames = array_merge(['archivedAt' => 'archived_at'], $columnNames);
         }
 
         return $columnNames;
