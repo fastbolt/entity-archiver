@@ -2,6 +2,8 @@
 
 namespace Fastbolt\EntityArchiverBundle\Model;
 
+use Fastbolt\EntityArchiverBundle\Strategy\EntityArchivingStrategy;
+
 class ArchivingChange
 {
     /**
@@ -28,7 +30,7 @@ class ArchivingChange
      *
      * @var string
      */
-    private string $strategy;
+    private EntityArchivingStrategy $strategy;
 
     /**
      * Database names of the columns that are copied to the archive table
@@ -103,22 +105,15 @@ class ArchivingChange
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getStrategy(): string
+    public function getStrategy(): EntityArchivingStrategy
     {
         return $this->strategy;
     }
 
-    /**
-     * @param string $strategy
-     *
-     * @return $this
-     */
-    public function setStrategy(string $strategy): ArchivingChange
+    public function setStrategy(EntityArchivingStrategy $strategy): ArchivingChange
     {
         $this->strategy = $strategy;
+
         return $this;
     }
 

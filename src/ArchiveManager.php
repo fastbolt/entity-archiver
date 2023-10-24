@@ -288,7 +288,7 @@ class ArchiveManager
     {
         $actions = [];
         foreach ($changes as $change) {
-            $actions[$change->getStrategy()][] = $change;
+            $actions[$change->getStrategy()->getName()][] = $change;
         }
 
         foreach ($actions as $strategyName => $changes) {
