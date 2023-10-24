@@ -321,6 +321,10 @@ class ArchiveManager
             $columnNames[$field] = $metaData->getColumnName($field);
         }
 
+        if ($configuration->isAddArchivedAtField()) {
+            $columnNames = array_merge([['archivedAt' => 'archived_at']], $columnNames);
+        }
+
         return $columnNames;
     }
 }
