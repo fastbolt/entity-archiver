@@ -237,7 +237,7 @@ class ArchiveManager
 
         // "archivedAt" field may not exist in the original table, so we add it here
         if ($configuration->isAddArchivedAtField()) {
-            $columnNames = array_merge(['archivedAt' => 'archived_at']);
+            $columnNames = array_merge(['archivedAt' => 'archived_at'], $columnNames);
         }
         $configuration->setColumnNames($columnNames);
 
