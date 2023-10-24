@@ -30,6 +30,11 @@ class Configuration implements ConfigurationInterface
                                 ->scalarNode('type')->isRequired()->end()      //all filters need a type
                             ->end()
                         ->end()
+                        ->arrayNode('fields')
+                            ->arrayPrototype()
+                                ->scalarPrototype()->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end();
