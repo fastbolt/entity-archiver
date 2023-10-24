@@ -15,23 +15,24 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('entity_archiver');
-        $rootNode = $treeBuilder->getRootNode();
+        $rootNode    = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
                 ->scalarNode('table_suffix')->defaultValue(self::ARCHIVE_TABLE_SUFFIX_DEFAULT)->end()
                 ->arrayNode('entities')
-                    ->arrayPrototype()->children()
-                        ->scalarNode('strategy')->defaultValue('archive')->end()
-                        ->arrayNode('filters')
-                            ->arrayPrototype()
-                                ->scalarPrototype()->end()                          //undefined number of arguments
-                            ->children()
-                                ->scalarNode('type')->isRequired()->end()      //all filters need a type
+                    ->arrayPrototype()
+                        ->children()
+                            ->scalarNode('strategy')->defaultValue('archive')->end()
+                            ->arrayNode('filters')
+                                ->arrayPrototype()
+                                    ->scalarPrototype()->end()                          //undefined number of arguments
+                                    ->children()
+                                        ->scalarNode('type')->isRequired()->end()      //all filters need a type
+                                    ->end()
+                                ->end()
                             ->end()
-                        ->end()
-                        ->arrayNode('fields')
-                            ->arrayPrototype()
+                            ->arrayNode('fields')
                                 ->scalarPrototype()->end()
                             ->end()
                         ->end()
