@@ -228,14 +228,18 @@ class ArchiveManager
 
         //get entries that will be archived
         $columnNames = $this->getColumnNames($configuration);
-        $configuration->setColumnNames($columnNames);
-
         $columnSelect = $this->removeSpecialChars(implode(', ', $columnNames));
         $query = sprintf(
             "SELECT %s FROM %s",
             $columnSelect,
             $tableName
         );
+
+        // "archivedAt" field may not exist in the original table, so we add it here
+        if ($configuration->isAddArchivedAtField()) {
+            $columnNames = array_merge(['archivedAt' => 'archived_at']);
+        }
+        $configuration->setColumnNames($columnNames);
 
         $this->applyFilters($configuration, $query);
 
@@ -319,10 +323,6 @@ class ArchiveManager
         $columnNames = [];
         foreach ($configuration->getArchivedFields() as $field) {
             $columnNames[$field] = $metaData->getColumnName($field);
-        }
-
-        if ($configuration->isAddArchivedAtField()) {
-            $columnNames = array_merge(['archivedAt' => 'archived_at'], $columnNames);
         }
 
         return $columnNames;
