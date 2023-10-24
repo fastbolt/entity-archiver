@@ -227,12 +227,16 @@ class ArchiveManager
             ->fetchOne();
 
         //get entries that will be archived
-        $columnSelect = $this->removeSpecialChars(implode(', ', $configuration->getArchivedFields()));
-        $query = sprintf(
-            "SELECT %s FROM %s",
-            $columnSelect,
-            $tableName
-        );
+        if ($configuration->getStrategy()->needsItemIdOnly()) {
+            $query = "SELECT %s FROM " . $tableName;
+        } else {
+            $columnSelect = $this->removeSpecialChars(implode(', ', $configuration->getArchivedFields()));
+            $query = sprintf(
+                "SELECT %s FROM %s",
+                $columnSelect,
+                $tableName
+            );
+        }
 
         $configuration->setColumnNames($metaData->getColumnNames());
 

@@ -70,4 +70,9 @@ class RemoveStrategy implements EntityArchivingStrategy
             $this->entityManager->getConnection()->executeQuery($query);
         }
     }
+
+    public function needsItemIdOnly(): bool
+    {
+        return true;
+    }
 }

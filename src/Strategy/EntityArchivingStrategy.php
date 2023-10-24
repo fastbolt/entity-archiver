@@ -20,4 +20,11 @@ interface EntityArchivingStrategy
      * @return void
      */
     public function execute(array $changes): void;
+
+    /**
+     * True if only the id of the item is needed for the process, e.g. when removing an item
+     *
+     * @return bool
+     */
+    public function needsItemIdOnly(): bool;
 }

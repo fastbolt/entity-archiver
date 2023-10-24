@@ -91,4 +91,9 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
         }
         $entityChange->setChanges($changes);
     }
+
+    public function needsItemIdOnly(): bool
+    {
+        return false;
+    }
 }
