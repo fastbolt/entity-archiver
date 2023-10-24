@@ -22,6 +22,8 @@ class EntityArchivingConfiguration
 
     private string $archiveTableSuffix = '';
 
+    private bool $addArchivedAtField = true;
+
     /**
      * @return string
      */
@@ -138,6 +140,18 @@ class EntityArchivingConfiguration
     public function setArchiveTableSuffix(string $archiveTableSuffix): EntityArchivingConfiguration
     {
         $this->archiveTableSuffix = $archiveTableSuffix;
+        return $this;
+    }
+
+    public function isAddArchivedAtField(): bool
+    {
+        return $this->addArchivedAtField;
+    }
+
+    public function setAddArchivedAtField(bool $addArchivedAtField): EntityArchivingConfiguration
+    {
+        $this->addArchivedAtField = $addArchivedAtField;
+
         return $this;
     }
 }

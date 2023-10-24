@@ -24,6 +24,7 @@ class Configuration implements ConfigurationInterface
                     ->arrayPrototype()
                         ->children()
                             ->scalarNode('strategy')->defaultValue('archive')->end()
+                            ->booleanNode('addArchivedAt')->defaultTrue()->end()
                             ->arrayNode('filters')
                                 ->arrayPrototype()
                                     ->scalarPrototype()->end()                          //undefined number of arguments

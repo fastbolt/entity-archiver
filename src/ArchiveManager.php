@@ -156,6 +156,10 @@ class ArchiveManager
         $fieldNames       = $metaData->getFieldNames();
         $archivedAtExists = false;
         foreach ($fieldNames as $fieldName) {
+            if (!in_array($fieldName, $configuration->getArchivedFields())) {
+                continue;
+            }
+
             $columnName = $metaData->getColumnName($fieldName);
             $columnType = $metaData->getTypeOfField($fieldName);
             $tableDraft
@@ -168,7 +172,7 @@ class ArchiveManager
             }
         }
 
-        if (!$archivedAtExists) {
+        if (!$archivedAtExists && $configuration->isAddArchivedAtField()) {
             $tableDraft->addColumn('archived_at', 'date');
         }
 

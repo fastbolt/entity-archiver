@@ -33,7 +33,8 @@ class EntityArchivingConfigurationFactory
                 ->setClassname($classname)
                 ->setArchivedFields($fields)
                 ->setFilters($filters)
-                ->setArchiveTableSuffix($tableSuffix);
+                ->setArchiveTableSuffix($tableSuffix)
+                ->setAddArchivedAtField($configForEntity['addArchivedAt']);
 
             $entityConfigurations[] = $entityConfiguration;
         }
