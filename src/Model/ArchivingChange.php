@@ -46,6 +46,13 @@ class ArchivingChange
     private string $archiveTableName;
 
     /**
+     * Name of the table the data is read from
+     *
+     * @var string
+     */
+    private string $originalTableName;
+
+    /**
      * @return string
      */
     public function getClassname(): string
@@ -152,6 +159,18 @@ class ArchivingChange
     public function setArchiveTableName(string $archiveTableName): ArchivingChange
     {
         $this->archiveTableName = $archiveTableName;
+        return $this;
+    }
+
+    public function getOriginalTableName(): string
+    {
+        return $this->originalTableName;
+    }
+
+    public function setOriginalTableName(string $originalTableName): ArchivingChange
+    {
+        $this->originalTableName = $originalTableName;
+
         return $this;
     }
 }

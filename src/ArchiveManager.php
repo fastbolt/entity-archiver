@@ -259,6 +259,7 @@ class ArchiveManager
             ->setStrategy($configuration->getStrategy())
             ->setArchivedColumns($configuration->getArchivedFields())
             ->setChanges($result)
+            ->setOriginalTableName($tableName)
             ->setArchiveTableName($tableName . $configuration->getArchiveTableSuffix());
 
         return $change;
