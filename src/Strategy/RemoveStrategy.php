@@ -21,6 +21,11 @@ class RemoveStrategy implements EntityArchivingStrategy
         return 'remove';
     }
 
+    public function needsItemIdOnly(): bool
+    {
+        return true;
+    }
+
     /**
      * @param EntityManagerInterface $entityManager
      */
@@ -69,10 +74,5 @@ class RemoveStrategy implements EntityArchivingStrategy
 
             $this->entityManager->getConnection()->executeQuery($query);
         }
-    }
-
-    public function needsItemIdOnly(): bool
-    {
-        return true;
     }
 }
