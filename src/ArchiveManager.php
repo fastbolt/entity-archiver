@@ -115,6 +115,9 @@ class ArchiveManager
 
         $transactions = [];
         foreach ($entityConfigurations as $entityConfig) {
+            $metaData  = $this->entityManager->getClassMetadata($entityConfig->getClassname());
+            $entityConfig->setColumnNames($metaData->getColumnNames());
+
             if ($this->isUpdateSchemas && $entityConfig->getStrategy()->getOptions()->isCreatesArchiveTable()) {
                 $this->updateTableSchema($entityConfig);
             }
@@ -165,6 +168,11 @@ class ArchiveManager
             if ($columnName === 'archived_at') {
                 $archivedAtExists = true;
             }
+        }
+
+        if (empty($configuration->getArchivedFields())) {
+            //if no fields given, archive all (foreign keys excluded)
+            $configuration->setArchivedFields($configuration->getColumnNames());
         }
 
         if (!$archivedAtExists && $configuration->isAddArchivedAtField()) {
@@ -221,20 +229,11 @@ class ArchiveManager
             ->executeQuery($countQuery)
             ->fetchOne();
 
-        $configuration->setColumnNames($metaData->getColumnNames());
-
         //get entries that will be archived
         if ($configuration->getStrategy()->getOptions()->isNeedsItemIdOnly()) {
             $query = "SELECT id FROM " . $tableName;
         } else {
-
-            //if no fields given, archive all
-            if (empty($configuration->getArchivedFields())) {
-                $columnSelect = '*';
-                $configuration->setArchivedFields($configuration->getColumnNames());
-            } else {
-                $columnSelect = $this->removeSpecialChars(implode(', ', $configuration->getArchivedFields()));
-            }
+            $columnSelect = $this->removeSpecialChars(implode(', ', $configuration->getArchivedFields()));
 
             $query = sprintf(
                 "SELECT %s FROM %s",
