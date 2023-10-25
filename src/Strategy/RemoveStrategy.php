@@ -3,7 +3,6 @@
 namespace Fastbolt\EntityArchiverBundle\Strategy;
 
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\EntityManagerInterface;
 use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
 use Fastbolt\EntityArchiverBundle\Model\StrategyOptions;
 use Fastbolt\EntityArchiverBundle\QueryManipulatorTrait;
@@ -12,8 +11,6 @@ use Fastbolt\EntityArchiverBundle\Services\DeleteService;
 class RemoveStrategy implements EntityArchivingStrategy
 {
     use QueryManipulatorTrait;
-
-    private EntityManagerInterface $entityManager;
 
     private ?StrategyOptions $options;
 
@@ -33,14 +30,12 @@ class RemoveStrategy implements EntityArchivingStrategy
     }
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @param DeleteService $deleteService
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
         DeleteService $deleteService
     )
     {
-        $this->entityManager = $entityManager;
         $this->deleteService = $deleteService;
         $this->options = new StrategyOptions();
         $this->options
