@@ -54,8 +54,6 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
     protected function insertInArchive(array $changes): void
     {
         foreach ($changes as $entityChange) {
-            $this->addArchivedAtField($entityChange);
-
             $columnNames = $entityChange->getArchivedColumns();
             $parts = [];
             foreach ($entityChange->getChanges() as $change) {
@@ -77,25 +75,5 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
 
             $this->entityManager->getConnection()->executeQuery($query);
         }
-    }
-
-    /**
-     * @return void
-     */
-    protected function addArchivedAtField(ArchivingChange $entityChange): void
-    {
-        $columns = $entityChange->getArchivedColumns();
-        if (!array_key_exists('archivedAt', $columns)) {
-            $columns['archivedAt'] = 'archived_at';
-            $entityChange->setArchivedColumns($columns);
-        }
-
-        $changes = $entityChange->getChanges();
-        foreach ($changes as &$change) {
-            if (!array_key_exists('archivedAt', $change)) {
-                $change['archived_at'] = $this->formatDate(new DateTime());
-            }
-        }
-        $entityChange->setChanges($changes);
     }
 }

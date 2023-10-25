@@ -244,9 +244,9 @@ class ArchiveManager
 
         $configuration->setColumnNames($metaData->getColumnNames());
 
-        // "archivedAt" field may not exist in the original table, so we add it here
+        // "archived_at" field may not exist in the original table, so we add it here
         if ($configuration->isAddArchivedAtField()) {
-            $configuration->setArchivedFields(array_merge($configuration->getArchivedFields(), ['archivedAt']));
+            $configuration->setArchivedFields(array_merge($configuration->getArchivedFields(), ['archived_at']));
         }
 
         $this->applyFilters($configuration, $query);
