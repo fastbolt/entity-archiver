@@ -2,14 +2,14 @@
 
 namespace Fastbolt\EntityArchiverBundle\Tests\Model;
 
-use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
+use Fastbolt\EntityArchiverBundle\Model\Transaction;
 use PHPUnit\Framework\TestCase;
 
 class ArchivingChangeTest extends TestCase
 {
     public function testGetterSetter(): void
     {
-        $change = new ArchivingChange();
+        $change = new Transaction();
         $change
             ->setArchivedColumns(['columns'])
             ->setClassname('foo')

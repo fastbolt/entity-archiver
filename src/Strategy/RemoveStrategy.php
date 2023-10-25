@@ -3,7 +3,7 @@
 namespace Fastbolt\EntityArchiverBundle\Strategy;
 
 use Doctrine\DBAL\Exception;
-use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
+use Fastbolt\EntityArchiverBundle\Model\Transaction;
 use Fastbolt\EntityArchiverBundle\Model\StrategyOptions;
 use Fastbolt\EntityArchiverBundle\QueryManipulatorTrait;
 use Fastbolt\EntityArchiverBundle\Services\DeleteService;
@@ -44,12 +44,13 @@ class RemoveStrategy implements EntityArchivingStrategy
     }
 
     /**
-     * @param ArchivingChange[] $changes
+     * @param Transaction[] $changes
+     *
      * @return void
      * @throws Exception
      */
-    public function execute(array $changes): void
+    public function execute(array $transactions): void
     {
-        $this->deleteService->deleteFromOriginTable($changes);
+        $this->deleteService->deleteFromOriginTable($transactions);
     }
 }

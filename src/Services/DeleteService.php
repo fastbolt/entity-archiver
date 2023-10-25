@@ -4,7 +4,7 @@ namespace Fastbolt\EntityArchiverBundle\Services;
 
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
-use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
+use Fastbolt\EntityArchiverBundle\Model\Transaction;
 use Fastbolt\EntityArchiverBundle\QueryManipulatorTrait;
 
 class DeleteService
@@ -19,13 +19,13 @@ class DeleteService
     }
 
     /**
-     * @param ArchivingChange[] $changes
+     * @param Transaction[] $transactions
      *
      * @return void
      */
-    public function deleteFromOriginTable(array $changes): void
+    public function deleteFromOriginTable(array $transactions): void
     {
-        foreach ($changes as $change) {
+        foreach ($transactions as $change) {
             $metaData  = $this->entityManager->getClassMetadata($change->getClassname());
             $tableName = $metaData->getTableName();
 

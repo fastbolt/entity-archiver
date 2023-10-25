@@ -3,7 +3,7 @@
 namespace Fastbolt\EntityArchiverBundle\Command;
 
 use Fastbolt\EntityArchiverBundle\ArchiveManager;
-use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
+use Fastbolt\EntityArchiverBundle\Model\Transaction;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Input\InputInterface;
@@ -90,8 +90,8 @@ class EntityArchiverCommand extends Command
     }
 
     /**
-     * @param SymfonyStyle      $io
-     * @param ArchivingChange[] $changes
+     * @param SymfonyStyle  $io
+     * @param Transaction[] $changes
      *
      * @return void
      */

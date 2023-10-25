@@ -6,7 +6,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
+use Fastbolt\EntityArchiverBundle\Model\Transaction;
 use Fastbolt\EntityArchiverBundle\Strategy\ArchiveStrategy;
 use PHPUnit\Framework\TestCase;
 
@@ -47,7 +47,7 @@ class ArchiveStrategyTest extends TestCase
                 'username' => 'bar'
             ]
         ];
-        $archivingChange = new ArchivingChange();
+        $archivingChange = new Transaction();
         $archivingChange
             ->setStrategy('remove')
             ->setTotalEntities(100)

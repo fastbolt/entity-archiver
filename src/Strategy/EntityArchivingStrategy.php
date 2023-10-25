@@ -2,7 +2,7 @@
 
 namespace Fastbolt\EntityArchiverBundle\Strategy;
 
-use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
+use Fastbolt\EntityArchiverBundle\Model\Transaction;
 use Fastbolt\EntityArchiverBundle\Model\StrategyOptions;
 
 interface EntityArchivingStrategy
@@ -17,7 +17,8 @@ interface EntityArchivingStrategy
     /**
      * Executes the strategy on all passed entries
      *
-     * @param ArchivingChange[] $changes
+     * @param Transaction[] $changes
+     *
      * @return void
      */
     public function execute(array $changes): void;

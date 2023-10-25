@@ -2,9 +2,10 @@
 
 namespace Fastbolt\EntityArchiverBundle\Services;
 
+use DateTime;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
-use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
+use Fastbolt\EntityArchiverBundle\Model\Transaction;
 use Fastbolt\EntityArchiverBundle\QueryManipulatorTrait;
 
 class InsertInArchiveService
@@ -19,8 +20,8 @@ class InsertInArchiveService
     }
 
     /**
-     * @param ArchivingChange[] $changes
-     * @param int   $batchSize How many Items are inserted with a single query
+     * @param Transaction[] $changes
+     * @param int           $batchSize How many Items are inserted with a single query
      *
      * @return void
      * @throws Exception
@@ -38,6 +39,7 @@ class InsertInArchiveService
             $parts = [];
             $counter = 0;
             foreach ($entityChange->getChanges() as $change) {
+                $change['archived_at'] = (new DateTime())->format('Y-m-d H:i:s');
                 $counter++;
                 $part = implode('", "', $change);
                 $part = '("' . $part . '")';

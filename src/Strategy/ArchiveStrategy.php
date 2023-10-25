@@ -2,7 +2,7 @@
 
 namespace Fastbolt\EntityArchiverBundle\Strategy;
 
-use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
+use Fastbolt\EntityArchiverBundle\Model\Transaction;
 use Fastbolt\EntityArchiverBundle\Model\StrategyOptions;
 use Fastbolt\EntityArchiverBundle\Services\DeleteService;
 use Fastbolt\EntityArchiverBundle\Services\InsertInArchiveService;
@@ -42,12 +42,13 @@ class ArchiveStrategy implements EntityArchivingStrategy
     }
 
     /**
-     * @param ArchivingChange[] $changes
+     * @param Transaction[] $changes
+     *
      * @return void
      */
-    public function execute(array $changes): void
+    public function execute(array $transactions): void
     {
-        $this->insertService->insertInArchive($changes);
-        $this->deleteService->deleteFromOriginTable($changes);
+        $this->insertService->insertInArchive($transactions);
+        $this->deleteService->deleteFromOriginTable($transactions);
     }
 }

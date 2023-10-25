@@ -2,13 +2,14 @@
 
 namespace Fastbolt\EntityArchiverBundle;
 
+use DateTime;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\ORM\EntityManagerInterface;
 use Fastbolt\EntityArchiverBundle\Factory\EntityArchivingConfigurationFactory;
 use Fastbolt\EntityArchiverBundle\Filter\EntityArchivingFilterInterface;
-use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
+use Fastbolt\EntityArchiverBundle\Model\Transaction;
 use Fastbolt\EntityArchiverBundle\Model\EntityArchivingConfiguration;
 use Fastbolt\EntityArchiverBundle\Strategy\EntityArchivingStrategy;
 use InvalidArgumentException;
@@ -98,7 +99,7 @@ class ArchiveManager
     }
 
     /**
-     * @return ArchivingChange[]
+     * @return Transaction[]
      * @throws \Doctrine\DBAL\Exception
      */
     public function runArchivingProcess(array $configuration): array
@@ -112,31 +113,25 @@ class ArchiveManager
 
         $entityConfigurations = $this->configurationFactory->create($configuration, $this->strategies);
 
-        $changes = [];
+        $transactions = [];
         foreach ($entityConfigurations as $entityConfig) {
             if ($this->isUpdateSchemas && $entityConfig->getStrategy()->getOptions()->isCreatesArchiveTable()) {
                 $this->updateTableSchema($entityConfig);
             }
 
             // get changing table data
-            $changes[$entityConfig->getClassName()] = $this->getChange($entityConfig);
+            $transactions[$entityConfig->getClassName()] = $this->getTransaction($entityConfig);
         }
 
-        if (empty($changes)) {
+        if (empty($transactions)) {
             return [];
         }
 
-        foreach ($changes as $change) {
-            if (empty($change->getChanges())) {
-                return [];
-            }
-        }
-
         if (!$this->isDryRun) {
-            $this->applyChanges($changes);
+            $this->applyTransactions($transactions);
         }
 
-        return $changes;
+        return $transactions;
     }
 
     /**
@@ -210,10 +205,10 @@ class ArchiveManager
      *
      * @param EntityArchivingConfiguration $configuration
      *
-     * @return ArchivingChange
+     * @return Transaction
      * @throws Exception
      */
-    private function getChange(EntityArchivingConfiguration $configuration): ArchivingChange
+    private function getTransaction(EntityArchivingConfiguration $configuration): Transaction
     {
         $metaData  = $this->entityManager->getClassMetadata($configuration->getClassname());
         $tableName = $metaData->getTableName();
@@ -226,13 +221,19 @@ class ArchiveManager
             ->executeQuery($countQuery)
             ->fetchOne();
 
+        $configuration->setColumnNames($metaData->getColumnNames());
+
         //get entries that will be archived
         if ($configuration->getStrategy()->getOptions()->isNeedsItemIdOnly()) {
             $query = "SELECT id FROM " . $tableName;
         } else {
-            $columnSelect = $this->removeSpecialChars(implode(', ', $configuration->getArchivedFields()));
-            if ($columnSelect === '') {
+
+            //if no fields given, archive all
+            if (empty($configuration->getArchivedFields())) {
                 $columnSelect = '*';
+                $configuration->setArchivedFields($configuration->getColumnNames());
+            } else {
+                $columnSelect = $this->removeSpecialChars(implode(', ', $configuration->getArchivedFields()));
             }
 
             $query = sprintf(
@@ -241,8 +242,6 @@ class ArchiveManager
                 $tableName
             );
         }
-
-        $configuration->setColumnNames($metaData->getColumnNames());
 
         // "archived_at" field may not exist in the original table, so we add it here
         if ($configuration->isAddArchivedAtField()) {
@@ -256,8 +255,15 @@ class ArchiveManager
             ->executeQuery($query)
             ->fetchAllAssociative();
 
-        $change = new ArchivingChange();
-        $change
+        if ($configuration->isAddArchivedAtField()) {
+            $date = (new DateTime())->format('Y-m-d H:i:s');
+            foreach ($result as &$item) {
+                $item['archived_at'] = $date;
+            }
+        }
+
+        $transaction = new Transaction();
+        $transaction
             ->setTotalEntities($entryCount)
             ->setClassname($configuration->getClassname())
             ->setStrategy($configuration->getStrategy())
@@ -267,7 +273,7 @@ class ArchiveManager
             ->setArchiveTableName($tableName . $configuration->getArchiveTableSuffix())
             ->setClassMetaData($metaData);
 
-        return $change;
+        return $transaction;
     }
 
     /**
@@ -292,16 +298,16 @@ class ArchiveManager
     }
 
     /**
-     * @param ArchivingChange[] $changes
+     * @param Transaction[] $transactions
      */
-    private function applyChanges(array $changes): void
+    private function applyTransactions(array $transactions): void
     {
         $actions = [];
-        foreach ($changes as $change) {
-            $actions[$change->getStrategy()->getName()][] = $change;
+        foreach ($transactions as $transaction) {
+            $actions[$transaction->getStrategy()->getName()][] = $transaction;
         }
 
-        foreach ($actions as $strategyName => $changes) {
+        foreach ($actions as $strategyName => $transactions) {
             if (!array_key_exists($strategyName, $this->strategies)) {
                 throw new InvalidConfigurationException(
                     'Strategy ' . $strategyName . ' was not found. Found strategies for '
@@ -309,7 +315,7 @@ class ArchiveManager
                 );
             }
 
-            $this->strategies[$strategyName]->execute($changes);
+            $this->strategies[$strategyName]->execute($transactions);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Fastbolt\EntityArchiverBundle\Model;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Fastbolt\EntityArchiverBundle\Strategy\EntityArchivingStrategy;
 
-class ArchivingChange
+class Transaction
 {
     /**
      * @var string
@@ -69,9 +69,9 @@ class ArchivingChange
     /**
      * @param string $classname
      *
-     * @return ArchivingChange
+     * @return Transaction
      */
-    public function setClassname(string $classname): ArchivingChange
+    public function setClassname(string $classname): Transaction
     {
         $this->classname = $classname;
 
@@ -89,9 +89,9 @@ class ArchivingChange
     /**
      * @param array $changes
      *
-     * @return ArchivingChange
+     * @return Transaction
      */
-    public function setChanges(array $changes): ArchivingChange
+    public function setChanges(array $changes): Transaction
     {
         $this->changes = $changes;
 
@@ -109,9 +109,9 @@ class ArchivingChange
     /**
      * @param int $totalEntities
      *
-     * @return ArchivingChange
+     * @return Transaction
      */
-    public function setTotalEntities(int $totalEntities): ArchivingChange
+    public function setTotalEntities(int $totalEntities): Transaction
     {
         $this->totalEntities = $totalEntities;
 
@@ -123,7 +123,7 @@ class ArchivingChange
         return $this->strategy;
     }
 
-    public function setStrategy(EntityArchivingStrategy $strategy): ArchivingChange
+    public function setStrategy(EntityArchivingStrategy $strategy): Transaction
     {
         $this->strategy = $strategy;
 
@@ -143,7 +143,7 @@ class ArchivingChange
      *
      * @return $this
      */
-    public function setArchivedColumns(array $archivedColumns): ArchivingChange
+    public function setArchivedColumns(array $archivedColumns): Transaction
     {
         $this->archivedColumns = $archivedColumns;
         return $this;
@@ -162,7 +162,7 @@ class ArchivingChange
      *
      * @return $this
      */
-    public function setArchiveTableName(string $archiveTableName): ArchivingChange
+    public function setArchiveTableName(string $archiveTableName): Transaction
     {
         $this->archiveTableName = $archiveTableName;
         return $this;
@@ -173,7 +173,7 @@ class ArchivingChange
         return $this->originalTableName;
     }
 
-    public function setOriginalTableName(string $originalTableName): ArchivingChange
+    public function setOriginalTableName(string $originalTableName): Transaction
     {
         $this->originalTableName = $originalTableName;
 
@@ -185,7 +185,7 @@ class ArchivingChange
         return $this->classMetaData;
     }
 
-    public function setClassMetaData(ClassMetadata $classMetaData): ArchivingChange
+    public function setClassMetaData(ClassMetadata $classMetaData): Transaction
     {
         $this->classMetaData = $classMetaData;
 
