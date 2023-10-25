@@ -118,6 +118,11 @@ class ArchiveManager
             $metaData  = $this->entityManager->getClassMetadata($entityConfig->getClassname());
             $entityConfig->setColumnNames($metaData->getColumnNames());
 
+            //if no fields set to archive, archive all (except foreign keys)
+            if (empty($entityConfig->getArchivedFields())) {
+                $entityConfig->setArchivedFields($metaData->getColumnNames());
+            }
+
             if ($this->isUpdateSchemas && $entityConfig->getStrategy()->getOptions()->isCreatesArchiveTable()) {
                 $this->updateTableSchema($entityConfig);
             }
@@ -168,11 +173,6 @@ class ArchiveManager
             if ($columnName === 'archived_at') {
                 $archivedAtExists = true;
             }
-        }
-
-        if (empty($configuration->getArchivedFields())) {
-            //if no fields given, archive all (foreign keys excluded)
-            $configuration->setArchivedFields($configuration->getColumnNames());
         }
 
         if (!$archivedAtExists && $configuration->isAddArchivedAtField()) {
