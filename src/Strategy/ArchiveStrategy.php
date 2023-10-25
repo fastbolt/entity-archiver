@@ -2,16 +2,19 @@
 
 namespace Fastbolt\EntityArchiverBundle\Strategy;
 
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
 use Fastbolt\EntityArchiverBundle\Model\StrategyOptions;
+use Fastbolt\EntityArchiverBundle\Services\DeleteService;
+use Fastbolt\EntityArchiverBundle\Services\InsertInArchiveService;
 
-class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
+class ArchiveStrategy implements EntityArchivingStrategy
 {
-    private EntityManagerInterface $entityManager;
-
     private ?StrategyOptions $options;
+
+    private InsertInArchiveService $insertService;
+
+    private DeleteService $deleteService;
 
     /**
      * @return string
@@ -21,12 +24,21 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
         return 'archive';
     }
 
+    public function getOptions(): StrategyOptions
+    {
+        return $this->options;
+    }
+
     /**
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        InsertInArchiveService $insertService,
+        DeleteService $deleteService
+    ) {
+        $this->insertService = $insertService;
+        $this->deleteService = $deleteService;
         parent::__construct($entityManager);
 
         $this->options = new StrategyOptions();
@@ -41,42 +53,7 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
      */
     public function execute(array $changes): void
     {
-        $this->insertInArchive($changes);
-        $this->deleteFromOriginTable($changes);
-    }
-
-    /**
-     * @param ArchivingChange[] $changes
-     * @return void
-     * @throws Exception
-     */
-    protected function insertInArchive(array $changes): void
-    {
-        foreach ($changes as $entityChange) {
-            $columnNames = $entityChange->getArchivedColumns();
-            if (count($columnNames) === 1) {
-                $columnNames = $entityChange->getClassMetaData()->getColumnNames();
-            }
-
-            $parts = [];
-            foreach ($entityChange->getChanges() as $change) {
-                $part = implode('", "', $change);
-                $part = '("' . $part . '")';
-                $parts[] = $part;
-            }
-
-            $valuesString = implode(', ', $parts);
-
-            $query = sprintf(
-                'INSERT INTO %s (%s) VALUES %s',
-                $entityChange->getArchiveTableName(),
-                implode(', ', $columnNames),
-                $valuesString
-            );
-
-            $query = $this->removeSpecialChars($query);
-
-            $this->entityManager->getConnection()->executeQuery($query);
-        }
+        $this->insertService->insertInArchive($changes);
+        $this->deleteService->deleteFromOriginTable($changes);
     }
 }
