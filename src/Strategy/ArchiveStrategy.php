@@ -6,10 +6,13 @@ use DateTime;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
+use Fastbolt\EntityArchiverBundle\Model\StrategyOptions;
 
 class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
 {
     private EntityManagerInterface $entityManager;
+
+    private ?StrategyOptions $options;
 
     /**
      * @return string
@@ -25,8 +28,12 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-
         parent::__construct($entityManager);
+
+        $this->options = new StrategyOptions();
+        $this->options
+            ->setNeedsItemIdOnly(true)
+            ->setCreatesArchiveTable(false);
     }
 
     /**
@@ -90,10 +97,5 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
             }
         }
         $entityChange->setChanges($changes);
-    }
-
-    public function needsItemIdOnly(): bool
-    {
-        return false;
     }
 }

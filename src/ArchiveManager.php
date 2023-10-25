@@ -114,7 +114,7 @@ class ArchiveManager
 
         $changes = [];
         foreach ($entityConfigurations as $entityConfig) {
-            if ($this->isUpdateSchemas) {
+            if ($this->isUpdateSchemas && $entityConfig->getStrategy()->getOptions()->isCreatesArchiveTable()) {
                 $this->updateTableSchema($entityConfig);
             }
 
@@ -227,7 +227,7 @@ class ArchiveManager
             ->fetchOne();
 
         //get entries that will be archived
-        if ($configuration->getStrategy()->needsItemIdOnly()) {
+        if ($configuration->getStrategy()->getOptions()->isNeedsItemIdOnly()) {
             $query = "SELECT id FROM " . $tableName;
         } else {
             $columnSelect = $this->removeSpecialChars(implode(', ', $configuration->getArchivedFields()));

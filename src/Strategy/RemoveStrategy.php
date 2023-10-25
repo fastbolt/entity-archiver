@@ -5,6 +5,7 @@ namespace Fastbolt\EntityArchiverBundle\Strategy;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
+use Fastbolt\EntityArchiverBundle\Model\StrategyOptions;
 use Fastbolt\EntityArchiverBundle\QueryManipulatorTrait;
 
 class RemoveStrategy implements EntityArchivingStrategy
@@ -12,6 +13,8 @@ class RemoveStrategy implements EntityArchivingStrategy
     use QueryManipulatorTrait;
 
     private EntityManagerInterface $entityManager;
+
+    private ?StrategyOptions $options;
 
     /**
      * @return string
@@ -21,9 +24,9 @@ class RemoveStrategy implements EntityArchivingStrategy
         return 'remove';
     }
 
-    public function needsItemIdOnly(): bool
+    public function getOptions(): StrategyOptions
     {
-        return true;
+        return $this->options;
     }
 
     /**
@@ -32,6 +35,10 @@ class RemoveStrategy implements EntityArchivingStrategy
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+        $this->options = new StrategyOptions();
+        $this->options
+            ->setNeedsItemIdOnly(true)
+            ->setCreatesArchiveTable(false);
     }
 
     /**

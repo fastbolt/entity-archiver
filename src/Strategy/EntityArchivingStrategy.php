@@ -3,6 +3,7 @@
 namespace Fastbolt\EntityArchiverBundle\Strategy;
 
 use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
+use Fastbolt\EntityArchiverBundle\Model\StrategyOptions;
 
 interface EntityArchivingStrategy
 {
@@ -24,7 +25,7 @@ interface EntityArchivingStrategy
     /**
      * True if only the id of the item is needed for the process, e.g. when removing an item
      *
-     * @return bool
+     * @return StrategyOptions
      */
-    public function needsItemIdOnly(): bool;
+    public function getOptions(): StrategyOptions;
 }
