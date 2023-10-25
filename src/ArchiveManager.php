@@ -231,6 +231,10 @@ class ArchiveManager
             $query = "SELECT id FROM " . $tableName;
         } else {
             $columnSelect = $this->removeSpecialChars(implode(', ', $configuration->getArchivedFields()));
+            if ($columnSelect === '') {
+                $columnSelect = '*';
+            }
+
             $query = sprintf(
                 "SELECT %s FROM %s",
                 $columnSelect,
@@ -308,29 +312,4 @@ class ArchiveManager
             $this->strategies[$strategyName]->execute($changes);
         }
     }
-
-//    /**
-//     * @param EntityArchivingConfiguration $configuration
-//     * @return array
-//     */
-//    private function getColumnNames(EntityArchivingConfiguration $configuration): array
-//    {
-//        $metaData = $this->entityManager->getClassMetadata($configuration->getClassname());
-//
-//        if (empty($configuration->getArchivedFields())) {
-//            $fields = [];
-//            foreach ($metaData->getColumnNames() as $colName) {
-//                $fields[$colName] = $metaData->getFieldName($colName);
-//            }
-//
-//            $configuration->setArchivedFields($fields);
-//        }
-//
-//        $columnNames = [];
-//        foreach ($configuration->getArchivedFields() as $field) {
-//            $columnNames[$field] = $metaData->getColumnName($field);
-//        }
-//
-//        return $columnNames;
-//    }
 }
