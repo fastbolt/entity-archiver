@@ -2,7 +2,6 @@
 
 namespace Fastbolt\EntityArchiverBundle\Strategy;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
 use Fastbolt\EntityArchiverBundle\Model\StrategyOptions;
 use Fastbolt\EntityArchiverBundle\Services\DeleteService;
@@ -29,17 +28,12 @@ class ArchiveStrategy implements EntityArchivingStrategy
         return $this->options;
     }
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(
-        EntityManagerInterface $entityManager,
         InsertInArchiveService $insertService,
         DeleteService $deleteService
     ) {
         $this->insertService = $insertService;
         $this->deleteService = $deleteService;
-        parent::__construct($entityManager);
 
         $this->options = new StrategyOptions();
         $this->options
