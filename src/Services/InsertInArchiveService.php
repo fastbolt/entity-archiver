@@ -2,7 +2,9 @@
 
 namespace Fastbolt\EntityArchiverBundle\Services;
 
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
 use Fastbolt\EntityArchiverBundle\QueryManipulatorTrait;
 
 class InsertInArchiveService
@@ -16,7 +18,14 @@ class InsertInArchiveService
         $this->entityManager = $entityManager;
     }
 
-    public function insertInArchive(array $changes): void
+    /**
+     * @param ArchivingChange[] $changes
+     * @param int   $batchSize How many Items are inserted with a single query
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function insertInArchive(array $changes, int $batchSize = 5000): void
     {
         foreach ($changes as $entityChange) {
             $columnNames = $entityChange->getArchivedColumns();
@@ -24,25 +33,39 @@ class InsertInArchiveService
                 $columnNames = $entityChange->getClassMetaData()->getColumnNames();
             }
 
+            $tableName = $entityChange->getArchiveTableName();
+
             $parts = [];
+            $counter = 0;
             foreach ($entityChange->getChanges() as $change) {
+                $counter++;
                 $part = implode('", "', $change);
                 $part = '("' . $part . '")';
                 $parts[] = $part;
+
+                if ($counter > $batchSize) {
+                    $query = $this->getQuery($tableName, $columnNames, $parts);
+                    $this->entityManager->getConnection()->executeQuery($query);
+                    $parts = [];
+                }
             }
 
-            $valuesString = implode(', ', $parts);
-
-            $query = sprintf(
-                'INSERT INTO %s (%s) VALUES %s',
-                $entityChange->getArchiveTableName(),
-                implode(', ', $columnNames),
-                $valuesString
-            );
-
-            $query = $this->removeSpecialChars($query);
-
+            $query = $this->getQuery($tableName, $columnNames, $parts);
             $this->entityManager->getConnection()->executeQuery($query);
         }
+    }
+
+    private function getQuery(string $tableName, array $columnNames, array $parts): string
+    {
+        $valuesString = implode(', ', $parts);
+
+        $query = sprintf(
+            'INSERT INTO %s (%s) VALUES %s',
+            $tableName,
+            implode(', ', $columnNames),
+            $valuesString
+        );
+
+        return $this->removeSpecialChars($query);
     }
 }
