@@ -2,6 +2,7 @@
 
 namespace Fastbolt\EntityArchiverBundle\Model;
 
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Fastbolt\EntityArchiverBundle\Strategy\EntityArchivingStrategy;
 
 class ArchivingChange
@@ -51,6 +52,11 @@ class ArchivingChange
      * @var string
      */
     private string $originalTableName;
+
+    /**
+     * @var ClassMetadata
+     */
+    private ClassMetadata $classMetaData;
 
     /**
      * @return string
@@ -170,6 +176,18 @@ class ArchivingChange
     public function setOriginalTableName(string $originalTableName): ArchivingChange
     {
         $this->originalTableName = $originalTableName;
+
+        return $this;
+    }
+
+    public function getClassMetaData(): ClassMetadata
+    {
+        return $this->classMetaData;
+    }
+
+    public function setClassMetaData(ClassMetadata $classMetaData): ArchivingChange
+    {
+        $this->classMetaData = $classMetaData;
 
         return $this;
     }

@@ -260,7 +260,8 @@ class ArchiveManager
             ->setArchivedColumns($configuration->getArchivedFields())
             ->setChanges($result)
             ->setOriginalTableName($tableName)
-            ->setArchiveTableName($tableName . $configuration->getArchiveTableSuffix());
+            ->setArchiveTableName($tableName . $configuration->getArchiveTableSuffix())
+            ->setClassMetaData($metaData);
 
         return $change;
     }
