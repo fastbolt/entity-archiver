@@ -2,7 +2,6 @@
 
 namespace Fastbolt\EntityArchiverBundle\Strategy;
 
-use DateTime;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Fastbolt\EntityArchiverBundle\Model\ArchivingChange;
@@ -32,8 +31,8 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
 
         $this->options = new StrategyOptions();
         $this->options
-            ->setNeedsItemIdOnly(true)
-            ->setCreatesArchiveTable(false);
+            ->setNeedsItemIdOnly(false)
+            ->setCreatesArchiveTable(true);
     }
 
     /**
@@ -55,6 +54,10 @@ class ArchiveStrategy extends RemoveStrategy implements EntityArchivingStrategy
     {
         foreach ($changes as $entityChange) {
             $columnNames = $entityChange->getArchivedColumns();
+            if (count($columnNames) === 1) {
+                $columnNames = $entityChange->getClassMetaData()->getColumnNames();
+            }
+
             $parts = [];
             foreach ($entityChange->getChanges() as $change) {
                 $part = implode('", "', $change);
