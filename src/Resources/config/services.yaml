@@ -5,10 +5,19 @@ services:
     Fastbolt\EntityArchiverBundle\Strategy\ArchiveStrategy:
         tags: [ 'fastbolt.archiver.strategy' ]
         arguments:
-            $entityManager: '@Doctrine\ORM\EntityManagerInterface'
+            $insertService: '@Fastbolt\EntityArchiverBundle\Services\InsertInArchiveService'
+            $deleteService: '@Fastbolt\EntityArchiverBundle\Services\DeleteService'
 
     Fastbolt\EntityArchiverBundle\Strategy\RemoveStrategy:
         tags: [ 'fastbolt.archiver.strategy' ]
+        arguments:
+            $deleteService: '@Fastbolt\EntityArchiverBundle\Services\DeleteService'
+
+    Fastbolt\EntityArchiverBundle\Services\DeleteService:
+        arguments:
+            $entityManager: '@Doctrine\ORM\EntityManagerInterface'
+
+    Fastbolt\EntityArchiverBundle\Services\InsertInArchiveService:
         arguments:
             $entityManager: '@Doctrine\ORM\EntityManagerInterface'
 
@@ -16,9 +25,9 @@ services:
 
     Fastbolt\EntityArchiverBundle\ArchiveManager:
         arguments:
-          $entityManager: '@Doctrine\ORM\EntityManagerInterface'
-          $configurationFactory: '@Fastbolt\EntityArchiverBundle\Factory\EntityArchivingConfigurationFactory'
-          $filters: !tagged_iterator fastbolt.archiver.filter
-          $strategies: !tagged_iterator fastbolt.archiver.strategy
+            $entityManager: '@Doctrine\ORM\EntityManagerInterface'
+            $configurationFactory: '@Fastbolt\EntityArchiverBundle\Factory\EntityArchivingConfigurationFactory'
+            $filters: !tagged_iterator fastbolt.archiver.filter
+            $strategies: !tagged_iterator fastbolt.archiver.strategy
 
     Fastbolt\EntityArchiverBundle\Command\EntityArchiverCommand:
