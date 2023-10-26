@@ -35,4 +35,10 @@ trait QueryManipulatorTrait
     {
         return preg_replace('/[*\/+#\\\\]/', '', $query);
     }
+
+    protected function escapeQuotationMarks(string $string): string
+    {
+        $string = preg_replace('/["]/', '\\\\\"', $string);
+        return preg_replace("/[']/", "\'", $string);
+    }
 }

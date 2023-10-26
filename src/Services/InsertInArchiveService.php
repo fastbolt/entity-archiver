@@ -4,9 +4,11 @@ namespace Fastbolt\EntityArchiverBundle\Services;
 
 use DateTime;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Fastbolt\EntityArchiverBundle\Model\Transaction;
 use Fastbolt\EntityArchiverBundle\QueryManipulatorTrait;
+use PhpParser\Node\Param;
 
 class InsertInArchiveService
 {
@@ -24,7 +26,6 @@ class InsertInArchiveService
      * @param int           $batchSize How many Items are inserted with a single query
      *
      * @return void
-     * @throws Exception
      */
     public function insertInArchive(array $changes, int $batchSize = 5000): void
     {
@@ -35,39 +36,63 @@ class InsertInArchiveService
             }
 
             $tableName = $entityChange->getArchiveTableName();
+            $date      = (new DateTime())->format('Y-m-d H:i:s');
 
-            $parts = [];
+            $this->entityManager->beginTransaction();
+
             $counter = 0;
             foreach ($entityChange->getChanges() as $change) {
-                $change['archived_at'] = (new DateTime())->format('Y-m-d H:i:s');
-                $counter++;
-                $part = implode('", "', $change);
-                $part = '("' . $part . '")';
-                $parts[] = $part;
+//                foreach ($change as &$value) {
+//                    if (!$value) continue;
+//                    $value = $this->removeSpecialChars($value);
+//                    $value = $this->escapeQuotationMarks($value);
+//                }
 
-                if ($counter > $batchSize) {
-                    $query = $this->getQuery($tableName, $columnNames, $parts);
-                    $this->entityManager->getConnection()->executeQuery($query);
-                    $parts = [];
+                $change['archived_at'] = $date;
+                $this->executeQuery($tableName, $columnNames, $change);
+
+                $counter++;
+                if ($counter >= $batchSize) {
+                    $this->entityManager->commit();
+                    $this->entityManager->beginTransaction();
                 }
             }
 
-            $query = $this->getQuery($tableName, $columnNames, $parts);
-            $this->entityManager->getConnection()->executeQuery($query);
+            $this->entityManager->commit();
         }
     }
 
-    private function getQuery(string $tableName, array $columnNames, array $parts): string
+    public function executeQuery(string $tableName, array $columnNames, array $change): void
     {
-        $valuesString = implode(', ', $parts);
+        $placeholders = [];
+        foreach ($change as $value) {
+            $placeholders[] = '?';
+        }
 
         $query = sprintf(
-            'INSERT INTO %s (%s) VALUES %s',
+            'INSERT INTO %s (%s) VALUES (%s)',
             $tableName,
             implode(', ', $columnNames),
-            $valuesString
+            implode(', ', $placeholders)
         );
 
-        return $this->removeSpecialChars($query);
+        $stmt = $this->entityManager->getConnection()->prepare($query);
+
+        $counter = 1;
+        foreach ($change as $value) {
+            $type = ParameterType::STRING;
+            if (is_int($value)) {
+                $type = ParameterType::INTEGER;
+            }
+
+            if (is_null($value)) {
+                $type = ParameterType::NULL;
+            }
+
+            $stmt->bindParam($counter, $value, $type);
+            $counter++;
+        }
+
+        $stmt->execute();
     }
 }

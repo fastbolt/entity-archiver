@@ -156,21 +156,16 @@ class ArchiveManager
         $schemaManager    = $this->entityManager->getConnection()->createSchemaManager();
 
         $tableDraft       = new Table($archiveTableName);
-        $fieldNames       = $metaData->getFieldNames();
         $archivedAtExists = false;
-        foreach ($fieldNames as $fieldName) {
-            if (!in_array($fieldName, $configuration->getArchivedFields())) {
-                continue;
-            }
-
-            $columnName = $metaData->getColumnName($fieldName);
-            $columnType = $metaData->getTypeOfField($fieldName);
+        foreach ($configuration->getArchivedFields() as $colName) {
+            $attrName = $metaData->getFieldForColumn($colName);
+            $columnType = $metaData->getTypeOfField($attrName);
             $tableDraft
-                ->addColumn($columnName, $columnType)
+                ->addColumn($colName, $columnType)
                 ->setNotnull(false)
                 ->setDefault(null); //TODO this is not set for some reason
 
-            if ($columnName === 'archived_at') {
+            if ($colName === 'archived_at') {
                 $archivedAtExists = true;
             }
         }
