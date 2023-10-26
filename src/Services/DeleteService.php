@@ -39,6 +39,8 @@ class DeleteService
                 $ids[] = $diff['id'];
             }
 
+            if (empty($ids)) return;
+
             $query = sprintf(
                 'DELETE FROM %s WHERE id IN (%s)',
                 $tableName,
