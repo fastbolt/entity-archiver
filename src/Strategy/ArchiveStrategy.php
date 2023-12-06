@@ -4,16 +4,13 @@ namespace Fastbolt\EntityArchiverBundle\Strategy;
 
 use Fastbolt\EntityArchiverBundle\Model\Transaction;
 use Fastbolt\EntityArchiverBundle\Model\StrategyOptions;
-use Fastbolt\EntityArchiverBundle\Services\DeleteService;
-use Fastbolt\EntityArchiverBundle\Services\InsertInArchiveService;
+use Fastbolt\EntityArchiverBundle\Services\MoveBetweenTablesService;
 
 class ArchiveStrategy implements EntityArchivingStrategy
 {
     private ?StrategyOptions $options;
 
-    private InsertInArchiveService $insertService;
-
-    private DeleteService $deleteService;
+    private MoveBetweenTablesService $moveService;
 
     /**
      * @return string
@@ -29,16 +26,15 @@ class ArchiveStrategy implements EntityArchivingStrategy
     }
 
     public function __construct(
-        InsertInArchiveService $insertService,
-        DeleteService $deleteService
+        MoveBetweenTablesService $moveService
     ) {
-        $this->insertService = $insertService;
-        $this->deleteService = $deleteService;
 
         $this->options = new StrategyOptions();
         $this->options
             ->setNeedsItemIdOnly(false)
             ->setCreatesArchiveTable(true);
+
+        $this->moveService = $moveService;
     }
 
     /**
@@ -46,9 +42,8 @@ class ArchiveStrategy implements EntityArchivingStrategy
      *
      * @return void
      */
-    public function execute(array $transactions): void
+    public function execute(array $changes): void
     {
-        $this->insertService->insertInArchive($transactions);
-        $this->deleteService->deleteFromOriginTable($transactions);
+        $this->moveService->moveToArchive($changes);
     }
 }

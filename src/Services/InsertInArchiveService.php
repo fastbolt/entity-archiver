@@ -3,7 +3,6 @@
 namespace Fastbolt\EntityArchiverBundle\Services;
 
 use DateTime;
-use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Fastbolt\EntityArchiverBundle\Model\Transaction;
@@ -55,6 +54,7 @@ class InsertInArchiveService
                 if ($counter >= $batchSize) {
                     $this->entityManager->commit();
                     $this->entityManager->beginTransaction();
+                    $counter = 0;
                 }
             }
 
@@ -62,7 +62,7 @@ class InsertInArchiveService
         }
     }
 
-    public function executeQuery(string $tableName, array $columnNames, array $change): void
+    private function executeQuery(string $tableName, array $columnNames, array $change): void
     {
         $placeholders = [];
         foreach ($change as $value) {
@@ -89,10 +89,10 @@ class InsertInArchiveService
                 $type = ParameterType::NULL;
             }
 
-            $stmt->bindParam($counter, $value, $type);
+            $stmt->bindValue($counter, $value, $type);
             $counter++;
         }
 
-        $stmt->execute();
+        $stmt->executeStatement();
     }
 }
