@@ -8,6 +8,7 @@ use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Fastbolt\EntityArchiverBundle\Model\Transaction;
+use Fastbolt\EntityArchiverBundle\QueryManipulatorTrait;
 
 /**
  * Can not be replaced by using Insert and Delete because that would cause the data to be partially moved on error,
@@ -15,6 +16,8 @@ use Fastbolt\EntityArchiverBundle\Model\Transaction;
  */
 class MoveBetweenTablesService
 {
+    use QueryManipulatorTrait;
+
     private EntityManagerInterface $entityManager;
 
     private Connection $conn;
@@ -43,11 +46,11 @@ class MoveBetweenTablesService
             $date        = (new DateTime())->format('Y-m-d H:i:s');
 
             foreach ($entityChange->getChanges() as $change) {
-//                foreach ($change as &$value) {
-//                    if (!$value) continue;
-//                    $value = $this->removeSpecialChars($value);
-//                    $value = $this->escapeQuotationMarks($value);
-//                }
+                foreach ($change as &$value) {
+                    if (!$value) continue;
+                    $value = $this->removeSpecialChars($value);
+                    $value = $this->escapeQuotationMarks($value);
+                }
 
                 $change['archived_at'] = $date;
             }
