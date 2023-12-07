@@ -46,15 +46,25 @@ class DeleteService
                 return;
             }
 
-            $query = sprintf(
-                'DELETE FROM %s WHERE id IN (%s)',
-                $tableName,
-                implode(', ', $ids)
-            );
+            $conn = $this->entityManager->getConnection();
+            $conn->beginTransaction();
 
-            $query = $this->removeSpecialChars($query);
+            $idChunks = array_chunk($ids, 2000);
+            foreach ($idChunks as $chunk) {
+                $query = sprintf(
+                    'DELETE FROM %s WHERE id IN (%s)',
+                    $tableName,
+                    implode(', ', $chunk)
+                );
+                $query = $this->removeSpecialChars($query);
+                $conn->executeQuery($query);
+                $conn->commit();
+                $conn->beginTransaction();
+            }
 
-            $this->entityManager->getConnection()->executeQuery($query);
+            if ($conn->isTransactionActive()) {
+                $conn->commit();
+            }
         }
     }
 }
