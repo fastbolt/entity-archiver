@@ -159,7 +159,7 @@ class ArchiveManager
         $archivedAtExists = false;
         foreach ($configuration->getArchivedFields() as $colName) {
             $attrName = $metaData->getFieldForColumn($colName);
-            $columnType = $metaData->getTypeOfField($attrName);
+            $columnType = $metaData->getTypeOfField($attrName) ?? 'string';
             $tableDraft
                 ->addColumn($colName, $columnType)
                 ->setNotnull(false)
