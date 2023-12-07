@@ -118,11 +118,19 @@ class Transaction
         return $this;
     }
 
+    /**
+     * @return EntityArchivingStrategy
+     */
     public function getStrategy(): EntityArchivingStrategy
     {
         return $this->strategy;
     }
 
+    /**
+     * @param EntityArchivingStrategy $strategy
+     *
+     * @return $this
+     */
     public function setStrategy(EntityArchivingStrategy $strategy): Transaction
     {
         $this->strategy = $strategy;
@@ -168,11 +176,19 @@ class Transaction
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getOriginalTableName(): string
     {
         return $this->originalTableName;
     }
 
+    /**
+     * @param string $originalTableName
+     *
+     * @return $this
+     */
     public function setOriginalTableName(string $originalTableName): Transaction
     {
         $this->originalTableName = $originalTableName;
@@ -180,11 +196,19 @@ class Transaction
         return $this;
     }
 
+    /**
+     * @return ClassMetadata
+     */
     public function getClassMetaData(): ClassMetadata
     {
         return $this->classMetaData;
     }
 
+    /**
+     * @param ClassMetadata $classMetaData
+     *
+     * @return $this
+     */
     public function setClassMetaData(ClassMetadata $classMetaData): Transaction
     {
         $this->classMetaData = $classMetaData;

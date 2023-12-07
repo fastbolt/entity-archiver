@@ -24,6 +24,9 @@ class RemoveStrategy implements EntityArchivingStrategy
         return 'remove';
     }
 
+    /**
+     * @return StrategyOptions
+     */
     public function getOptions(): StrategyOptions
     {
         return $this->options;
@@ -34,8 +37,7 @@ class RemoveStrategy implements EntityArchivingStrategy
      */
     public function __construct(
         DeleteService $deleteService
-    )
-    {
+    ) {
         $this->deleteService = $deleteService;
         $this->options = new StrategyOptions();
         $this->options

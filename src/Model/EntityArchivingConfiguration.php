@@ -145,11 +145,19 @@ class EntityArchivingConfiguration
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function isAddArchivedAtField(): bool
     {
         return $this->addArchivedAtField;
     }
 
+    /**
+     * @param bool $addArchivedAtField
+     *
+     * @return $this
+     */
     public function setAddArchivedAtField(bool $addArchivedAtField): EntityArchivingConfiguration
     {
         $this->addArchivedAtField = $addArchivedAtField;

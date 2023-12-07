@@ -22,6 +22,9 @@ class MoveBetweenTablesService
 
     private Connection $conn;
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -47,7 +50,9 @@ class MoveBetweenTablesService
 
             foreach ($entityChange->getChanges() as $change) {
                 foreach ($change as &$value) {
-                    if (!$value) continue;
+                    if (!$value) {
+                        continue;
+                    }
                     $value = $this->removeSpecialChars($value);
                     $value = $this->escapeQuotationMarks($value);
                 }

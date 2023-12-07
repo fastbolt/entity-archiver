@@ -20,11 +20,17 @@ class ArchiveStrategy implements EntityArchivingStrategy
         return 'archive';
     }
 
+    /**
+     * @return StrategyOptions
+     */
     public function getOptions(): StrategyOptions
     {
         return $this->options;
     }
 
+    /**
+     * @param MoveBetweenTablesService $moveService
+     */
     public function __construct(
         MoveBetweenTablesService $moveService
     ) {

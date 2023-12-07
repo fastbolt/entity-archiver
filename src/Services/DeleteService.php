@@ -13,6 +13,9 @@ class DeleteService
 
     private EntityManagerInterface $entityManager;
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -39,7 +42,9 @@ class DeleteService
                 $ids[] = $diff['id'];
             }
 
-            if (empty($ids)) return;
+            if (empty($ids)) {
+                return;
+            }
 
             $query = sprintf(
                 'DELETE FROM %s WHERE id IN (%s)',

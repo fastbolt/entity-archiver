@@ -36,6 +36,11 @@ trait QueryManipulatorTrait
         return preg_replace('/[*\/+#\\\\]/', '', $query);
     }
 
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
     protected function escapeQuotationMarks(string $string): string
     {
         $string = preg_replace('/["]/', '\\\\\"', $string);

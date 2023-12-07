@@ -7,7 +7,6 @@ use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Fastbolt\EntityArchiverBundle\Model\Transaction;
 use Fastbolt\EntityArchiverBundle\QueryManipulatorTrait;
-use PhpParser\Node\Param;
 
 class InsertInArchiveService
 {
@@ -15,6 +14,9 @@ class InsertInArchiveService
 
     private EntityManagerInterface $entityManager;
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -62,6 +64,14 @@ class InsertInArchiveService
         }
     }
 
+    /**
+     * @param string $tableName
+     * @param array  $columnNames
+     * @param array  $change
+     *
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
     private function executeQuery(string $tableName, array $columnNames, array $change): void
     {
         $placeholders = [];
