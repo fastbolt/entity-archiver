@@ -3,18 +3,21 @@
 namespace Fastbolt\EntityArchiverBundle\Services;
 
 use DateTime;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Fastbolt\EntityArchiverBundle\Model\Transaction;
 
 /**
- * Can not be replaces by using Insert and Delete because that would cause the data to be partially moved on error,
+ * Can not be replaced by using Insert and Delete because that would cause the data to be partially moved on error,
  * here we can do this in one transaction which can be reversed
  */
 class MoveBetweenTablesService
 {
     private EntityManagerInterface $entityManager;
+
+    private Connection $conn;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -35,10 +38,9 @@ class MoveBetweenTablesService
                 $columnNames = $entityChange->getClassMetaData()->getColumnNames();
             }
 
-            $tableName = $entityChange->getArchiveTableName();
-            $date      = (new DateTime())->format('Y-m-d H:i:s');
-
-            $this->entityManager->beginTransaction();
+            $tableName = $entityChange->getOriginalTableName();
+            $archiveName = $entityChange->getArchiveTableName();
+            $date        = (new DateTime())->format('Y-m-d H:i:s');
 
             foreach ($entityChange->getChanges() as $change) {
 //                foreach ($change as &$value) {
@@ -48,30 +50,35 @@ class MoveBetweenTablesService
 //                }
 
                 $change['archived_at'] = $date;
-                $this->executeQuery($tableName, $columnNames, $change, $batchSize);
-
             }
 
-            $this->entityManager->commit();
+            $this->executeQuery($tableName, $archiveName, $columnNames, $changes, $batchSize);
         }
     }
 
     /**
      * @param string        $tableName
+     * @param string        $archiveName
      * @param string[]      $columnNames
      * @param Transaction[] $changes
+     * @param int           $batchSize
      *
      * @return void
+     * @throws \Doctrine\DBAL\Exception
      */
-    private function executeQuery(string $tableName, array $columnNames, array $changes, int $batchSize): void
-    {
-        $placeholders = [];
-        $ids = []; //TODO might be wrong here
+    private function executeQuery(
+        string $tableName,
+        string $archiveName,
+        array $columnNames,
+        array $changes,
+        int $batchSize
+    ): void {
+        $this->conn = $this->entityManager->getConnection();
+        $this->conn->beginTransaction();
+
+        $ids = [];
+        $transactionCounter = 0;
         foreach ($changes as $entityChange) {
-            $this->entityManager->beginTransaction();
-
-
-            //TODO is this mixing up entites?
             foreach ($entityChange->getChanges() as $diff) {
                 //TODO add support for other primary keys and criteria for removal
                 if (!array_key_exists('id', $diff)) {
@@ -80,50 +87,55 @@ class MoveBetweenTablesService
 
                 $ids[] = $diff['id'];
 
-                $counter = 1;
+                $placeholders = [];
                 foreach ($diff as $value) {
                     $placeholders[] = '?';
-                    $type = $this->getParameterType($value);
-
-                    $insert = sprintf(
-                        'INSERT INTO %s (%s) VALUES (%s)',
-                        $tableName,
-                        implode(', ', $columnNames),
-                        implode(', ', $placeholders)
-                    );
-                    $insertStmt = $this->entityManager->getConnection()->prepare($insert);
-                    $insertStmt->bindValue($counter, $value, $type);
-                    $insertStmt->executeStatement();
                 }
 
-                $counter++;
+                $insert = sprintf(
+                    'INSERT INTO %s (%s) VALUES (%s)',
+                    $archiveName,
+                    implode(', ', $columnNames),
+                    implode(', ', $placeholders)
+                );
+                $insertStmt = $this->conn->prepare($insert);
 
-                if ($counter >= $batchSize) {
-                    $delete = sprintf(
-                        'DELETE FROM %s WHERE id IN (%s)',
-                        $tableName,
-                        implode(', ', $ids)
-                    );
-                    $deleteStmt = $this->entityManager->getConnection()->prepare($delete);
-                    $deleteStmt->executeStatement();
+                $argumentCounter = 1;
+                foreach ($diff as $value) {
+                    $type = $this->getParameterType($value);
+                    $insertStmt->bindValue($argumentCounter, $value, $type);
+                    $argumentCounter++;
+                }
+
+                $insertStmt->executeStatement();
+
+                if ($transactionCounter >= $batchSize) {
+                    $this->executeDelete($tableName, $ids);
 
                     $ids = [];
 
-                    $this->entityManager->commit();
+                    $this->conn->commit();
+                    $this->conn->beginTransaction();
+                    $transactionCounter = 0;
                 }
+                $transactionCounter++;
             }
         }
 
-        $this->entityManager->commit();
-
+        if ($this->conn->isTransactionActive()) {
+            if (count($ids) > 0) {
+                $this->executeDelete($tableName, $ids);
+            }
+            $this->conn->commit();
+        }
     }
 
     /**
      * @param mixed $value
      *
-     * @return ParameterType
+     * @return int
      */
-    private function getParameterType($value): ParameterType
+    private function getParameterType($value): int
     {
         $type = ParameterType::STRING;
         if (is_int($value)) {
@@ -135,5 +147,23 @@ class MoveBetweenTablesService
         }
 
         return $type;
+    }
+
+    /**
+     * @param string                    $tableName
+     * @param array                     $ids
+     *
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function executeDelete(string $tableName, array $ids): void
+    {
+        $delete     = sprintf(
+            'DELETE FROM %s WHERE id IN (%s)',
+            $tableName,
+            implode(', ', $ids)
+        );
+        $deleteStmt = $this->conn->prepare($delete);
+        $deleteStmt->executeStatement();
     }
 }

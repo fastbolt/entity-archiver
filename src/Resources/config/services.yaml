@@ -5,8 +5,7 @@ services:
     Fastbolt\EntityArchiverBundle\Strategy\ArchiveStrategy:
         tags: [ 'fastbolt.archiver.strategy' ]
         arguments:
-            $insertService: '@Fastbolt\EntityArchiverBundle\Services\InsertInArchiveService'
-            $deleteService: '@Fastbolt\EntityArchiverBundle\Services\DeleteService'
+            $moveService: '@Fastbolt\EntityArchiverBundle\Services\MoveBetweenTablesService'
 
     Fastbolt\EntityArchiverBundle\Strategy\RemoveStrategy:
         tags: [ 'fastbolt.archiver.strategy' ]
@@ -18,6 +17,10 @@ services:
             $entityManager: '@Doctrine\ORM\EntityManagerInterface'
 
     Fastbolt\EntityArchiverBundle\Services\InsertInArchiveService:
+        arguments:
+            $entityManager: '@Doctrine\ORM\EntityManagerInterface'
+
+    Fastbolt\EntityArchiverBundle\Services\MoveBetweenTablesService:
         arguments:
             $entityManager: '@Doctrine\ORM\EntityManagerInterface'
 
