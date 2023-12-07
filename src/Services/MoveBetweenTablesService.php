@@ -90,7 +90,7 @@ class MoveBetweenTablesService
             foreach ($entityChange->getChanges() as $diff) {
                 //TODO add support for other primary keys and criteria for removal
                 if (!array_key_exists('id', $diff)) {
-                    throw new Exception("'id' must be set as archived field");
+                    throw new Exception("'id' must be set as archived field for " . $tableName);
                 }
 
                 $ids[] = $diff['id'];
