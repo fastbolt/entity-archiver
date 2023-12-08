@@ -239,8 +239,11 @@ class ArchiveManager
         }
 
         // "archived_at" field may not exist in the original table, so we add it here
+        $archivingDateFieldName = $configuration->getArchivingDateFieldName();
         if ($configuration->isAddArchivedAtField()) {
-            $configuration->setArchivedFields(array_merge($configuration->getArchivedFields(), ['archived_at']));
+            $configuration->setArchivedFields(
+                array_merge($configuration->getArchivedFields(), [$archivingDateFieldName])
+            );
         }
 
         $this->applyFilters($configuration, $query);
@@ -253,7 +256,7 @@ class ArchiveManager
         if ($configuration->isAddArchivedAtField()) {
             $date = (new DateTime())->format('Y-m-d H:i:s');
             foreach ($result as &$item) {
-                $item['archived_at'] = $date;
+                $item[$archivingDateFieldName] = $date;
             }
         }
 

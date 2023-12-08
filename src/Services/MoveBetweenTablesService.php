@@ -57,7 +57,7 @@ class MoveBetweenTablesService
                     $value = $this->escapeQuotationMarks($value);
                 }
 
-                $change['archived_at'] = $date;
+                $change[$entityChange->getArchivedAtFieldName()] = $date;
             }
 
             $this->executeQuery($tableName, $archiveName, $columnNames, $changes, $batchSize);

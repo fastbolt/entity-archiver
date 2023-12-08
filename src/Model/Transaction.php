@@ -59,6 +59,13 @@ class Transaction
     private ClassMetadata $classMetaData;
 
     /**
+     * Name of the field that holds the archiving date
+     *
+     * @var string
+     */
+    private string $archivedAtFieldName;
+
+    /**
      * @return string
      */
     public function getClassname(): string
@@ -212,6 +219,18 @@ class Transaction
     public function setClassMetaData(ClassMetadata $classMetaData): Transaction
     {
         $this->classMetaData = $classMetaData;
+
+        return $this;
+    }
+
+    public function getArchivedAtFieldName(): string
+    {
+        return $this->archivedAtFieldName;
+    }
+
+    public function setArchivedAtFieldName(string $archivedAtFieldName): Transaction
+    {
+        $this->archivedAtFieldName = $archivedAtFieldName;
 
         return $this;
     }

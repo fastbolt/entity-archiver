@@ -49,7 +49,7 @@ class InsertInArchiveService
 //                    $value = $this->escapeQuotationMarks($value);
 //                }
 
-                $change['archived_at'] = $date;
+                $change[$entityChange->getArchivedAtFieldName()] = $date;
                 $this->executeQuery($tableName, $columnNames, $change);
 
                 $counter++;

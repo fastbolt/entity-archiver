@@ -7,9 +7,9 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    private const ARCHIVE_TABLE_SUFFIX_DEFAULT = '_archive';
+    public const ARCHIVE_TABLE_SUFFIX_DEFAULT = '_archive';
 
-    private const ARCHIVING_DATE_FIELD_NAME_DEFAULT = 'archived_at';
+    public const ARCHIVING_DATE_FIELD_NAME_DEFAULT = 'archived_at';
 
     /**
      * @return TreeBuilder

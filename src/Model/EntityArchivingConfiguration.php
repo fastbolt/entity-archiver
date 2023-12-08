@@ -2,6 +2,7 @@
 
 namespace Fastbolt\EntityArchiverBundle\Model;
 
+use Fastbolt\EntityArchiverBundle\DependencyInjection\Configuration;
 use Fastbolt\EntityArchiverBundle\Strategy\EntityArchivingStrategy;
 
 class EntityArchivingConfiguration
@@ -26,7 +27,7 @@ class EntityArchivingConfiguration
 
     private bool $addArchivedAtField = false;
 
-    private string $archivingDateFieldName = 'archived_at';
+    private string $archivingDateFieldName = Configuration::ARCHIVING_DATE_FIELD_NAME_DEFAULT;
 
     /**
      * @return string
