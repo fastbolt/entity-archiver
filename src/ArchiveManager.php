@@ -269,7 +269,8 @@ class ArchiveManager
             ->setChanges($result)
             ->setOriginalTableName($tableName)
             ->setArchiveTableName($tableName . $configuration->getArchiveTableSuffix())
-            ->setClassMetaData($metaData);
+            ->setClassMetaData($metaData)
+            ->setArchivedAtFieldName($configuration->getArchivingDateFieldName());
 
         return $transaction;
     }
