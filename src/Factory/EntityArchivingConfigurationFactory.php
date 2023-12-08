@@ -2,6 +2,7 @@
 
 namespace Fastbolt\EntityArchiverBundle\Factory;
 
+use Fastbolt\EntityArchiverBundle\DependencyInjection\Configuration;
 use Fastbolt\EntityArchiverBundle\Model\EntityArchivingConfiguration;
 
 class EntityArchivingConfigurationFactory
@@ -49,7 +50,10 @@ class EntityArchivingConfigurationFactory
                 ->setFilters($filters)
                 ->setArchiveTableSuffix($tableSuffix)
                 ->setAddArchivedAtField($configForEntity['addArchivedAt'])
-                ->setArchivingDateFieldName($configForEntity['archivingDateFieldName'])
+                ->setArchivingDateFieldName(
+                    $configForEntity['archivingDateFieldName']
+                    ?? Configuration::ARCHIVING_DATE_FIELD_NAME_DEFAULT
+                )
             ;
 
             $entityConfigurations[] = $entityConfiguration;
