@@ -223,11 +223,19 @@ class Transaction
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getArchivedAtFieldName(): string
     {
         return $this->archivedAtFieldName;
     }
 
+    /**
+     * @param string $archivedAtFieldName
+     *
+     * @return $this
+     */
     public function setArchivedAtFieldName(string $archivedAtFieldName): Transaction
     {
         $this->archivedAtFieldName = $archivedAtFieldName;

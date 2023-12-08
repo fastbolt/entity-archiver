@@ -168,11 +168,19 @@ class EntityArchivingConfiguration
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getArchivingDateFieldName(): string
     {
         return $this->archivingDateFieldName;
     }
 
+    /**
+     * @param string $archivingDateFieldName
+     *
+     * @return $this
+     */
     public function setArchivingDateFieldName(string $archivingDateFieldName): EntityArchivingConfiguration
     {
         $this->archivingDateFieldName = $archivingDateFieldName;

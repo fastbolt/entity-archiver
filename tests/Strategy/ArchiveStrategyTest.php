@@ -2,59 +2,50 @@
 
 namespace Fastbolt\EntityArchiverBundle\Tests\Strategy;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Result;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Fastbolt\EntityArchiverBundle\Model\Transaction;
+use Fastbolt\EntityArchiverBundle\Services\MoveBetweenTablesService;
 use Fastbolt\EntityArchiverBundle\Strategy\ArchiveStrategy;
+use Fastbolt\EntityArchiverBundle\Strategy\RemoveStrategy;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ArchiveStrategyTest extends TestCase
 {
+    private MoveBetweenTablesService $moveService;
+
+    /**
+     * @var ArchiveStrategy[]|MockObject[]
+     */
+    private array $strategies;
+
+    protected function setUp(): void
+    {
+        $this->moveService = $this->createMock(MoveBetweenTablesService::class);
+
+        $remove = $this->createMock(RemoveStrategy::class);
+        $this->strategies = ['remove' => $remove];
+    }
+
     public function testExecute(): void
     {
-        $metaData = $this->createMock(ClassMetadata::class);
-        $metaData->method('getTableName')->willReturn('users');
-
-        $res = $this->createMock(Result::class);
-        $connection = $this->createMock(Connection::class);
-        $connection->expects(self::exactly(2))
-            ->method('executeQuery')
-            ->willReturnCallback(function ($query) use ($res) {
-                if (str_contains($query, "INSERT")) {
-                    self::assertStringContainsString('INSERT INTO users_archive (id, username, archived_at) VALUES ("100", "foo", "', $query);
-                } else {
-                    self::assertStringContainsString("DELETE FROM users WHERE id IN (100, 101)", $query);
-                }
-
-                return $res;
-            });
-
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $entityManager->method('getClassMetadata')->willReturn($metaData);
-        $entityManager->method('getConnection')->willReturn($connection);
-
-        $strategy = new ArchiveStrategy($entityManager);
+        $strategy = new ArchiveStrategy($this->moveService);
 
         $changes = [
             [
                 'id' => 100,
                 'username' => 'foo'
             ],
-            [
-                'id' => 101,
-                'username' => 'bar'
-            ]
         ];
         $archivingChange = new Transaction();
         $archivingChange
-            ->setStrategy('remove')
+            ->setStrategy($this->strategies['remove'])
             ->setTotalEntities(100)
             ->setClassname('App\Entity\User')
             ->setArchivedColumns(['id', 'username'])
             ->setChanges($changes)
             ->setArchiveTableName('users_archive');
+
+        $this->moveService->expects(self::once())->method('moveToArchive');
 
         $strategy->execute([$archivingChange]);
     }
