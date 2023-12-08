@@ -43,11 +43,11 @@ class InsertInArchiveService
 
             $counter = 0;
             foreach ($entityChange->getChanges() as $change) {
-//                foreach ($change as &$value) {
-//                    if (!$value) continue;
-//                    $value = $this->removeSpecialChars($value);
-//                    $value = $this->escapeQuotationMarks($value);
-//                }
+                foreach ($change as &$value) {
+                    if (!$value) continue;
+                    $value = $this->removeSpecialChars($value);
+                    $value = $this->escapeQuotationMarks($value);
+                }
 
                 $change[$entityChange->getArchivedAtFieldName()] = $date;
                 $this->executeQuery($tableName, $columnNames, $change);
