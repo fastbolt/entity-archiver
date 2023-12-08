@@ -34,25 +34,38 @@ Will update the archive tables based on the configuration in entity-archiver.yam
 Example:
 ```yaml
 #entity-archiver.yaml
-table_suffix: _archive
-entities:
-  App\Entity\Article:
-    strategy: archive
-    filters:
-      - {
-        type: age,
-        age: 14,
-        unit: days,
-        field: createdAt
-      }
+entity_archiver:
+    table_suffix: archive
+    entities:
+        -   entity: App\Entity\Log
+            strategy: archive
+            filters:
+                - {
+                    type: age,
+                    age: 1,
+                    unit: months,
+                    field: created_at
+                }
+            archivingDateFieldName: archived_at
+            fields: [
+                'id',
+                'item_type',
+                'item_id',
+                'item_description',
+                'item_action',
+                'fk_client_id',
+                'fk_user_id'
+        ]
 ```
 
 ```
-table_suffix          Name of the table created by the bundle to hold the archived entities
+table_suffix           Suffix of the tables created by the bundle to hold the archived entities
+
+addArchivedAt          Wether to add a field for the archiving date in the archive table
+archivingDateFieldName Field name of the generated date field holding the date when the archiving was done, default 'archived_at'
 strategy               What to do with the entity when it is selected to be archived
     - remove           Deletes the enitity using the 'id'-column
     - archive          Removes it from the original table and pastes a non-unique copy to the archive table
-
 filters:            
     - type: age
         - age          integer         
