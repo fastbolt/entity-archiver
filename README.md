@@ -84,3 +84,13 @@ tags: [ 'fastbolt.archiver.filter' ]
 Fastbolt\EntityArchiverBundle\Strategy\ArchiveStrategy:
     tags: [ 'fastbolt.archiver.strategy' ]
 ```
+
+***Make doctrine ignore archive Tables:***
+Doctrine will generate migrations to delete the generated archive tables, as they are not connected to an entity.
+To prevent that, add an exception to your doctrine configuration (replace '_archive' if you changed the table suffix):
+```yaml
+#doctrine.yaml
+doctrine:
+    dbal:
+        schema_filter: ~^(?!.*_archive$)~
+```
