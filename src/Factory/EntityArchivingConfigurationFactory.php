@@ -17,8 +17,16 @@ class EntityArchivingConfigurationFactory
         $tableSuffix = $configuration['table_suffix'];
         $configurations = $configuration['entities'];
         $entityConfigurations = [];
-        foreach ($configurations as $classname => $configForEntity) {
+        foreach ($configurations as $index => $configForEntity) {
             $fields = [];
+
+            if (!array_key_exists('entity', $configForEntity)) {
+                throw new \OutOfRangeException(
+                    'Value for key \'entity\' not given for archiving configuration with index ' . $index
+                );
+            }
+            $classname = $configForEntity['entity'];
+
             if (array_key_exists('fields', $configForEntity)) {
                 $fields = $configForEntity['fields'];
             }
@@ -40,7 +48,9 @@ class EntityArchivingConfigurationFactory
                 ->setArchivedFields($fields)
                 ->setFilters($filters)
                 ->setArchiveTableSuffix($tableSuffix)
-                ->setAddArchivedAtField($configForEntity['addArchivedAt']);
+                ->setAddArchivedAtField($configForEntity['addArchivedAt'])
+                ->setArchivingDateFieldName($configForEntity['archivingDateFieldName'])
+            ;
 
             $entityConfigurations[] = $entityConfiguration;
         }

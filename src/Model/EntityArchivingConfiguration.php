@@ -26,6 +26,8 @@ class EntityArchivingConfiguration
 
     private bool $addArchivedAtField = false;
 
+    private string $archivingDateFieldName = 'archived_at';
+
     /**
      * @return string
      */
@@ -161,6 +163,18 @@ class EntityArchivingConfiguration
     public function setAddArchivedAtField(bool $addArchivedAtField): EntityArchivingConfiguration
     {
         $this->addArchivedAtField = $addArchivedAtField;
+
+        return $this;
+    }
+
+    public function getArchivingDateFieldName(): string
+    {
+        return $this->archivingDateFieldName;
+    }
+
+    public function setArchivingDateFieldName(string $archivingDateFieldName): EntityArchivingConfiguration
+    {
+        $this->archivingDateFieldName = $archivingDateFieldName;
 
         return $this;
     }

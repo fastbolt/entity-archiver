@@ -9,6 +9,8 @@ class Configuration implements ConfigurationInterface
 {
     private const ARCHIVE_TABLE_SUFFIX_DEFAULT = '_archive';
 
+    private const ARCHIVING_DATE_FIELD_NAME_DEFAULT = 'archived_at';
+
     /**
      * @return TreeBuilder
      */
@@ -23,8 +25,11 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('entities')
                     ->arrayPrototype()
                         ->children()
+                            ->scalarNode('entity')->isRequired()->end()
                             ->scalarNode('strategy')->defaultValue('archive')->end()
                             ->booleanNode('addArchivedAt')->defaultTrue()->end()
+                            ->scalarNode('archivingDateFieldName')
+                                ->defaultValue(self::ARCHIVING_DATE_FIELD_NAME_DEFAULT)->end()
                             ->arrayNode('filters')
                                 ->arrayPrototype()
                                     ->scalarPrototype()->end()                          //undefined number of arguments

@@ -128,7 +128,7 @@ class ArchiveManager
             }
 
             // get changing table data
-            $transactions[$entityConfig->getClassName()] = $this->getTransaction($entityConfig);
+            $transactions[] = $this->getTransaction($entityConfig);
         }
 
         if (empty($transactions)) {
@@ -156,7 +156,8 @@ class ArchiveManager
         $schemaManager    = $this->entityManager->getConnection()->createSchemaManager();
 
         $tableDraft       = new Table($archiveTableName);
-        $archivedAtExists = false;
+        $archivingDateColExists = false;
+        $dateFieldName = $configuration->getArchivingDateFieldName();
         foreach ($configuration->getArchivedFields() as $colName) {
             $attrName = $metaData->getFieldForColumn($colName);
             $columnType = $metaData->getTypeOfField($attrName) ?? 'string';
@@ -165,13 +166,13 @@ class ArchiveManager
                 ->setNotnull(false)
                 ->setDefault(null); //TODO this is not set for some reason
 
-            if ($colName === 'archived_at') {
-                $archivedAtExists = true;
+            if ($colName === $dateFieldName) {
+                $archivingDateColExists = true;
             }
         }
 
-        if (!$archivedAtExists && $configuration->isAddArchivedAtField()) {
-            $tableDraft->addColumn('archived_at', 'date');
+        if (!$archivingDateColExists && $configuration->isAddArchivedAtField()) {
+            $tableDraft->addColumn($dateFieldName, 'date');
         }
 
         if ($schemaManager->tablesExist($archiveTableName)) {
