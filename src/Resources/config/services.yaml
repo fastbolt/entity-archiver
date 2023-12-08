@@ -34,3 +34,7 @@ services:
             $strategies: !tagged_iterator fastbolt.archiver.strategy
 
     Fastbolt\EntityArchiverBundle\Command\EntityArchiverCommand:
+
+    Fastbolt\EntityArchiverBundle\EventListener\MigrationsListener:
+        tags:
+            - { name: doctrine.event_listener, event: migrations.generate }
